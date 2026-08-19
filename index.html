@@ -3,49 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>🌊 大连·烟台 旅行看板</title>
+    <title>🌊 大连·烟台 浪漫旅行看板</title>
+    <!-- 高德地图 JS API -->
+    <script src="https://webapi.amap.com/maps?v=2.0&key=62088fab4daba4586f4fd36d250047a1&plugin=AMap.Weather,AMap.MarkerClusterer"></script>
     <style>
-        /* ===== 全局重置 ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: #f0f4f8;
             padding: 16px;
-            color: #1a2e3f;
+            color: #1a1a3e;
             min-height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1542370282-1f7a1008d629?w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(42, 74, 138, 0.60) 0%, rgba(108, 94, 207, 0.55) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
 
-        /* ===== 顶部导航 ===== */
+        /* ===== 顶部 ===== */
         .header {
-            background: white;
-            border-radius: 20px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
             padding: 16px 24px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
+            border: 1px solid rgba(255,255,255,0.25);
+            box-shadow: 0 4px 24px rgba(42,74,138,0.15);
         }
         .header h1 {
             font-size: 22px;
-            color: #0a2a3b;
+            color: white;
             display: flex;
             align-items: center;
             gap: 8px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.15);
         }
-        .header h1 small {
-            font-size: 13px;
-            color: #6f8f9a;
-            font-weight: 400;
-        }
-        .header-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+        .header h1 small { font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 400; }
+        .header-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .btn {
             padding: 6px 16px;
             border: none;
@@ -53,21 +64,30 @@
             font-weight: 600;
             font-size: 13px;
             cursor: pointer;
-            transition: 0.15s;
-            background: #eef4f7;
-            color: #124257;
+            transition: 0.2s;
         }
-        .btn-primary { background: #1f5a6b; color: white; }
-        .btn-primary:hover { background: #154956; }
-        .btn-outline { background: transparent; border: 1.5px solid #d0dce4; }
-        .btn-outline:hover { background: #eef4f7; }
-        .btn-success { background: #4a9e7a; color: white; }
-        .btn-success:hover { background: #3a8264; }
+        .btn-white { background: rgba(255,255,255,0.9); color: #2a4a8a; }
+        .btn-white:hover { background: white; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,74,138,0.25); }
+        .btn-outline-white { background: rgba(255,255,255,0.12); color: white; border: 1.5px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px); }
+        .btn-outline-white:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .btn-primary { background: #4a7ad8; color: white; }
+        .btn-primary:hover { background: #3a68c0; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74,122,216,0.4); }
+        .plan-switcher {
+            display: flex; gap: 4px; background: rgba(255,255,255,0.10); border-radius: 30px; padding: 3px; border: 1px solid rgba(255,255,255,0.15);
+        }
+        .plan-switcher .btn-plan {
+            padding: 4px 16px; border: none; border-radius: 30px; font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s;
+            background: transparent; color: rgba(255,255,255,0.6);
+        }
+        .plan-switcher .btn-plan.active { background: rgba(255,255,255,0.2); color: white; box-shadow: 0 2px 12px rgba(42,74,138,0.2); }
+        .plan-switcher .btn-plan:hover:not(.active) { color: white; }
+        .plan-label { color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 600; letter-spacing: 0.5px; display: flex; align-items: center; padding-right: 4px; }
 
-        /* ===== 一句话摘要 ===== */
+        /* ===== 摘要 ===== */
         .hero-summary {
-            background: linear-gradient(135deg, #1a4a5a 0%, #0f3848 100%);
-            border-radius: 20px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
             padding: 20px 28px;
             margin-bottom: 16px;
             color: white;
@@ -75,638 +95,866 @@
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 24px rgba(42,74,138,0.12);
         }
-        .hero-summary .main-text {
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-        .hero-summary .main-text .highlight {
-            color: #7fc9d9;
-            font-weight: 700;
-        }
-        .hero-summary .sub-text {
-            font-size: 13px;
-            opacity: 0.8;
-            margin-top: 4px;
-        }
-        .hero-summary .badge-group {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .hero-summary .main-text { font-size: 18px; font-weight: 500; line-height: 1.6; text-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .hero-summary .main-text .highlight { color: #8bb8ff; font-weight: 700; }
+        .hero-summary .sub-text { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+        .hero-summary .badge-group { display: flex; gap: 12px; flex-wrap: wrap; }
         .hero-summary .badge {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(4px);
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 13px;
-            text-align: center;
+            background: rgba(255,255,255,0.12); backdrop-filter: blur(4px); padding: 6px 16px; border-radius: 30px;
+            font-size: 13px; text-align: center; border: 1px solid rgba(255,255,255,0.08);
         }
         .hero-summary .badge .num { font-weight: 700; font-size: 18px; display: block; }
-        .hero-summary .badge .label { font-size: 11px; opacity: 0.7; }
+        .hero-summary .badge .label { font-size: 11px; opacity: 0.75; }
 
-        /* ===== 核心数据卡片 ===== */
+        /* ===== 统计卡片 ===== */
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 16px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px;
         }
         .stat-card {
-            background: white;
-            border-radius: 16px;
-            padding: 14px 18px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-left: 4px solid #2f8f9d;
+            background: rgba(255,255,255,0.78); backdrop-filter: blur(8px); border-radius: 20px; padding: 14px 18px;
+            text-align: center; border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 4px 20px rgba(42,74,138,0.06);
+            border-left: 4px solid #4a7ad8; transition: 0.2s;
         }
-        .stat-card .number {
-            font-size: 30px;
-            font-weight: 700;
-            color: #003341;
-            line-height: 1.2;
-        }
-        .stat-card .number .unit { font-size: 14px; font-weight: 400; color: #6f8f9a; }
-        .stat-card .label { font-size: 12px; color: #6f8f9a; margin-top: 2px; }
-        .stat-card.green { border-left-color: #4a9e7a; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(42,74,138,0.10); }
+        .stat-card .number { font-size: 30px; font-weight: 700; color: #1a1a3e; line-height: 1.2; }
+        .stat-card .number .unit { font-size: 14px; font-weight: 400; color: #6a6a8a; }
+        .stat-card .label { font-size: 12px; color: #6a6a8a; margin-top: 2px; }
+        .stat-card.blue { border-left-color: #4a7ad8; }
+        .stat-card.purple { border-left-color: #6c5ecf; }
+        .stat-card.teal { border-left-color: #3a9a9a; }
         .stat-card.orange { border-left-color: #e6a23c; }
-        .stat-card.red { border-left-color: #d97a7a; }
-        .stat-card.blue { border-left-color: #4a8bb7; }
+        .stat-card.green { border-left-color: #4a9e7a; }
 
-        /* ===== 今日行程（置顶突出） ===== */
+        /* ===== 今日行程 ===== */
         .today-card {
-            background: white;
-            border-radius: 16px;
-            padding: 16px 22px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 2px solid #d0e8f0;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border-radius: 24px; padding: 18px 24px;
+            margin-bottom: 16px; border: 2px solid rgba(74,122,216,0.25); box-shadow: 0 4px 24px rgba(42,74,138,0.06);
+            position: relative; overflow: hidden;
         }
-        .today-card .today-label {
-            font-size: 12px;
-            color: #4a8bb7;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .today-card .today-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #003341;
-            margin: 4px 0 6px;
-        }
-        .today-card .today-meals {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 24px;
-            font-size: 14px;
-            color: #1f4050;
-        }
+        .today-card::before { content: '✨'; position: absolute; right: 20px; top: 10px; font-size: 28px; opacity: 0.15; }
+        .today-card .today-label { font-size: 12px; color: #4a7ad8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .today-card .today-title { font-size: 20px; font-weight: 700; color: #1a1a3e; margin: 4px 0 8px; }
+        .today-card .today-meals { display: flex; flex-wrap: wrap; gap: 12px 24px; font-size: 14px; color: #1a1a3e; }
         .today-card .today-meals .meal-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            display: flex; align-items: center; gap: 6px; background: rgba(74,122,216,0.05); padding: 2px 12px 2px 6px; border-radius: 20px;
         }
         .today-card .today-meals .meal-tag {
-            font-weight: 600;
-            color: #0e4154;
-            background: #eef4f7;
-            padding: 0 10px;
-            border-radius: 20px;
-            font-size: 12px;
+            font-weight: 600; color: #4a7ad8; background: rgba(74,122,216,0.10); padding: 0 10px; border-radius: 20px; font-size: 11px;
         }
-        .today-card .today-activity {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #eef4f7;
-            color: #1f5a6b;
-            font-size: 14px;
-        }
+        .today-card .today-activity { margin-top: 10px; padding-top: 10px; border-top: 2px dashed rgba(74,122,216,0.15); color: #3a68c0; font-size: 14px; }
+        .today-card .editable-text { cursor: text; padding: 2px 4px; border-radius: 4px; transition: 0.2s; }
+        .today-card .editable-text:hover { background: rgba(74,122,216,0.06); }
+        .today-card .editable-text:focus { outline: 2px solid #4a7ad8; background: white; }
 
-        /* ===== 网格布局 ===== */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
+        /* ===== 地图容器 ===== */
+        .map-container {
+            height: 200px; border-radius: 16px; overflow: hidden; margin-top: 10px;
+            border: 2px solid rgba(74,122,216,0.15); background: #eef2f8; position: relative;
         }
+        .map-container .map-placeholder {
+            display: flex; align-items: center; justify-content: center; height: 100%;
+            color: #6a6a8a; font-size: 13px; flex-direction: column; gap: 4px;
+        }
+        .map-container .map-placeholder .big-icon { font-size: 32px; }
+
+        /* ===== 网格 ===== */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
         .full-width { grid-column: 1 / -1; }
-
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 16px 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            background: rgba(255,255,255,0.78); backdrop-filter: blur(8px); border-radius: 20px; padding: 16px 20px;
+            border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 20px rgba(42,74,138,0.04);
         }
         .card-title {
-            font-weight: 600;
-            font-size: 15px;
-            color: #124257;
-            border-bottom: 2px solid #eef4f7;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-weight: 600; font-size: 15px; color: #1a1a3e; border-bottom: 2px solid rgba(74,122,216,0.12);
+            padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
         }
-        .card-title .tag {
-            font-size: 11px;
-            background: #d0e3eb;
-            color: #0f4357;
-            padding: 1px 12px;
-            border-radius: 30px;
-            font-weight: 400;
-        }
+        .card-title .tag { font-size: 11px; background: rgba(74,122,216,0.08); color: #4a7ad8; padding: 1px 12px; border-radius: 30px; font-weight: 400; }
 
-        /* ===== 交通价格 ===== */
-        .price-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-        }
-        .price-item {
-            background: #f7fafc;
-            border-radius: 12px;
-            padding: 10px 12px;
-            text-align: center;
-            transition: 0.15s;
-        }
-        .price-item .route { font-weight: 600; color: #0b384b; font-size: 13px; }
-        .price-item .price { font-size: 22px; font-weight: 700; color: #003341; }
-        .price-item .price .unit { font-size: 13px; font-weight: 400; color: #6f8f9a; }
-        .price-item .sub { font-size: 11px; color: #6f8f9a; }
-
-        /* ===== 天气 ===== */
-        .weather-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .weather-item {
-            flex: 1;
-            min-width: 80px;
-            background: #f7fafc;
-            border-radius: 12px;
-            padding: 10px 12px;
-            text-align: center;
-        }
-        .weather-item .city { font-weight: 600; color: #0b384b; font-size: 13px; }
-        .weather-item .temp { font-size: 22px; font-weight: 300; color: #003341; }
-        .weather-item .desc { font-size: 12px; color: #5f8a9a; }
-
-        /* ===== 行程列表 ===== */
+        /* ===== 每日行程卡片 ===== */
         .day-block {
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f4f8;
+            padding: 12px 0; border-bottom: 1px solid rgba(74,122,216,0.06); transition: 0.2s; border-radius: 12px; padding: 12px 14px;
         }
         .day-block:last-child { border-bottom: none; }
-        .day-block .day-title {
-            font-weight: 700;
-            color: #003341;
-            font-size: 15px;
-            display: flex;
-            justify-content: space-between;
+        .day-block:hover { background: rgba(74,122,216,0.02); }
+        .day-block .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .day-block .day-title { font-weight: 700; color: #1a1a3e; font-size: 16px; }
+        .day-block .day-detail { font-size: 13px; color: #3a3a5a; padding-left: 4px; }
+        .day-block .day-detail .meal-label { font-weight: 600; color: #4a7ad8; display: inline-block; width: 48px; }
+        .day-block .day-detail .editable-text { cursor: text; padding: 2px 4px; border-radius: 4px; transition: 0.2s; }
+        .day-block .day-detail .editable-text:hover { background: rgba(74,122,216,0.05); }
+        .day-block .day-detail .editable-text:focus { outline: 2px solid #4a7ad8; background: white; }
+        .day-block .day-map-container { height: 140px; border-radius: 12px; overflow: hidden; margin-top: 8px; border: 1.5px solid rgba(74,122,216,0.10); background: #eef2f8; position: relative; }
+        .day-block .map-actions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+        .day-block .map-actions .btn-small {
+            padding: 2px 12px; border: none; border-radius: 20px; font-size: 11px; cursor: pointer; background: rgba(74,122,216,0.08); color: #4a7ad8; transition: 0.2s;
         }
-        .day-block .day-detail {
-            font-size: 13px;
-            color: #2d4b5c;
-            margin-top: 4px;
-            padding-left: 4px;
+        .day-block .map-actions .btn-small:hover { background: rgba(74,122,216,0.18); }
+
+        /* ===== 价格 ===== */
+        .price-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .price-item {
+            background: rgba(240,245,255,0.5); backdrop-filter: blur(4px); border-radius: 16px; padding: 10px 12px;
+            text-align: center; border: 1.5px solid rgba(74,122,216,0.12);
         }
-        .day-block .day-detail .meal-label {
-            font-weight: 600;
-            color: #0e4154;
-            display: inline-block;
-            width: 48px;
+        .price-item .route { font-weight: 600; color: #1a1a3e; font-size: 13px; }
+        .price-item .price-input {
+            font-size: 20px; font-weight: 700; color: #1a1a3e; width: 80px; text-align: center; border: none;
+            background: rgba(255,255,255,0.6); border-bottom: 2px dashed rgba(74,122,216,0.25); padding: 2px 0; margin: 0 auto; display: block; border-radius: 4px;
         }
+        .price-item .price-input:focus { outline: none; border-bottom-color: #4a7ad8; background: white; }
+        .price-item .sub { font-size: 11px; color: #6a6a8a; margin-top: 4px; }
+
+        /* ===== 天气 ===== */
+        .weather-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .weather-item {
+            flex: 1; min-width: 80px; background: rgba(240,245,255,0.4); backdrop-filter: blur(4px); border-radius: 16px;
+            padding: 10px 12px; text-align: center; border: 1.5px solid rgba(74,122,216,0.08);
+        }
+        .weather-item .city { font-weight: 600; color: #1a1a3e; font-size: 13px; }
+        .weather-item .temp { font-size: 22px; font-weight: 300; color: #1a1a3e; }
+        .weather-item .desc { font-size: 12px; color: #6a6a8a; }
+
+        /* ===== 酒店 ===== */
+        .hotel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .hotel-item {
+            background: rgba(240,245,255,0.4); backdrop-filter: blur(4px); border-radius: 16px; padding: 12px 14px;
+            border-left: 4px solid #4a7ad8; border: 1.5px solid rgba(74,122,216,0.10); border-left-width: 4px;
+        }
+        .hotel-item:hover { border-color: rgba(74,122,216,0.2); transform: translateX(2px); }
+        .hotel-item .hotel-name { font-weight: 700; color: #1a1a3e; font-size: 15px; }
+        .hotel-item .hotel-city { font-size: 12px; color: #6a6a8a; }
+        .hotel-item .hotel-desc { font-size: 13px; color: #4a4a6a; margin-top: 4px; }
+        .hotel-item .hotel-price { font-size: 13px; color: #4a7ad8; font-weight: 600; margin-top: 4px; }
 
         /* ===== 时间线 ===== */
-        .tl-item {
-            display: flex;
-            gap: 12px;
-            padding: 5px 0;
-            border-bottom: 1px solid #f0f4f8;
-            font-size: 13px;
-        }
-        .tl-item .tl-time {
-            font-weight: 600;
-            color: #0b3e4e;
-            min-width: 80px;
-        }
+        .tl-item { display: flex; gap: 12px; padding: 5px 0; border-bottom: 1px solid rgba(74,122,216,0.06); font-size: 13px; border-radius: 8px; padding: 6px 10px; }
+        .tl-item:hover { background: rgba(74,122,216,0.02); }
+        .tl-item .tl-time { font-weight: 600; color: #4a7ad8; min-width: 80px; }
+        .tl-item .tl-desc-editable { flex: 1; cursor: text; padding: 0 4px; border-radius: 4px; color: #1a1a3e; }
+        .tl-item .tl-desc-editable:hover { background: rgba(74,122,216,0.04); }
+        .tl-item .tl-desc-editable:focus { outline: 2px solid #4a7ad8; background: white; }
 
         /* ===== 花费 ===== */
-        .expense-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px solid #f0f4f8;
-            font-size: 13px;
+        .expense-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(74,122,216,0.06); font-size: 13px; }
+        .expense-item .expense-desc-editable { cursor: text; padding: 0 4px; border-radius: 4px; }
+        .expense-item .expense-desc-editable:hover { background: rgba(74,122,216,0.04); }
+        .expense-item .expense-desc-editable:focus { outline: 2px solid #4a7ad8; background: white; }
+        .expense-item .expense-amount-input { width: 60px; border: none; background: transparent; font-weight: 600; color: #1a1a3e; text-align: center; border-bottom: 2px dashed rgba(74,122,216,0.15); }
+        .expense-item .expense-amount-input:focus { outline: none; border-bottom-color: #4a7ad8; }
+        .expense-item .del { color: #b35a5a; cursor: pointer; margin-left: 8px; opacity: 0.4; transition: 0.2s; }
+        .expense-item .del:hover { opacity: 1; }
+        .add-expense { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .add-expense input { padding: 6px 12px; border: 1.5px solid rgba(74,122,216,0.15); border-radius: 30px; font-size: 13px; flex: 1; min-width: 100px; background: rgba(255,255,255,0.8); }
+        .add-expense input:focus { outline: 2px solid #4a7ad8; border-color: transparent; }
+
+        /* ===== 提示 ===== */
+        .tip-banner {
+            background: rgba(74,122,216,0.06); backdrop-filter: blur(4px); border: 1.5px solid rgba(74,122,216,0.10);
+            border-radius: 16px; padding: 12px 18px; margin-top: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
         }
-        .expense-item .del {
-            color: #b35a5a;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-        .add-expense {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        .add-expense input {
-            padding: 6px 12px;
-            border: 1px solid #dde8ef;
-            border-radius: 30px;
-            font-size: 13px;
-            flex: 1;
-            min-width: 100px;
-        }
-        .add-expense input:focus { outline: 2px solid #2f8f9d; border-color: transparent; }
+        .tip-banner .tip-text strong { color: #4a7ad8; }
 
         /* ===== 响应式 ===== */
         @media (max-width: 768px) {
             .grid-2 { grid-template-columns: 1fr; }
             .price-row { grid-template-columns: 1fr; }
+            .hotel-grid { grid-template-columns: 1fr; }
             .hero-summary { flex-direction: column; align-items: stretch; gap: 12px; }
-            .hero-summary .badge-group { justify-content: flex-start; }
             .header { flex-direction: column; align-items: stretch; }
-            .header-actions { justify-content: flex-start; }
+            .header-actions { justify-content: flex-start; flex-wrap: wrap; }
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .day-block .day-map-container { height: 110px; }
+            .map-container { height: 150px; }
         }
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .stat-card .number { font-size: 24px; }
             body { padding: 10px; }
             .today-card .today-meals { flex-direction: column; gap: 4px; }
+            .header h1 { font-size: 18px; }
+            .day-block .day-map-container { height: 90px; }
+            .map-container { height: 120px; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <!-- ===== 顶部导航 ===== -->
-    <div class="header">
-        <h1>🌊 大连·烟台 <small>6天5晚 · 旅行看板</small></h1>
-        <div class="header-actions">
-            <button class="btn btn-primary" onclick="refreshWeather()">🌤️ 刷新天气</button>
-            <button class="btn btn-outline" onclick="refreshPrices()">🔄 刷新价格</button>
-            <button class="btn btn-outline" onclick="exportData()">📥 导出</button>
-            <button class="btn btn-outline" onclick="resetAll()">↺ 重置</button>
+        <!-- ===== 顶部 ===== -->
+        <div class="header">
+            <h1>🌊 大连·烟台 <small>6天5晚 · 浪漫旅行</small></h1>
+            <div class="header-actions">
+                <div class="plan-switcher">
+                    <span class="plan-label">🗺️ 路线</span>
+                    <button class="btn-plan active" data-plan="dl-yt" onclick="switchPlan('dl-yt')">大连→烟台</button>
+                    <button class="btn-plan" data-plan="yt-dl" onclick="switchPlan('yt-dl')">烟台→大连</button>
+                </div>
+                <button class="btn btn-outline-white" onclick="refreshWeather()">🌤️ 天气</button>
+                <button class="btn btn-white" onclick="exportData()">📥 导出</button>
+                <button class="btn btn-outline-white" onclick="resetAll()">↺ 重置</button>
+            </div>
+        </div>
+
+        <!-- ===== 摘要 ===== -->
+        <div class="hero-summary" id="heroSummary">
+            <div>
+                <div class="main-text">
+                    ✨ 距出发还有 <span class="highlight" id="heroDays">0</span> 天 ·
+                    总预算 <span class="highlight" id="heroBudget">5800</span> 元 ·
+                    剩余 <span class="highlight" id="heroRemain">5800</span> 元
+                </div>
+                <div class="sub-text" id="heroWeather">🌤️ 大连 18°C 晴 · 烟台 20°C 多云</div>
+            </div>
+            <div class="badge-group">
+                <div class="badge"><span class="num" id="badgeDays">6</span><span class="label">总天数</span></div>
+                <div class="badge"><span class="num" id="badgeSpent">0</span><span class="label">已花费</span></div>
+                <div class="badge"><span class="num" id="badgeRemainPct">100</span><span class="label">剩余%</span></div>
+            </div>
+        </div>
+
+        <!-- ===== 统计卡片 ===== -->
+        <div class="stats-grid">
+            <div class="stat-card blue"><div class="number" id="statDays">6</div><div class="label">📆 行程总天数</div></div>
+            <div class="stat-card purple"><div class="number" id="statBudget">5800</div><div class="label">💰 总预算 (元)</div></div>
+            <div class="stat-card orange"><div class="number" id="statSpent">0</div><div class="label">💸 已花费 (元)</div></div>
+            <div class="stat-card green"><div class="number" id="statRemain">5800</div><div class="label">✅ 剩余预算 (元)</div></div>
+            <div class="stat-card teal"><div class="number" id="statTransport">2452</div><div class="label">🚄 交通小计 (两人)</div></div>
+            <div class="stat-card blue"><div class="number" id="statWeather">--°C</div><div class="label">🌤️ 大连当前天气</div></div>
+        </div>
+
+        <!-- ===== 今日行程 ===== -->
+        <div class="today-card" id="todayCard">
+            <div class="today-label">✨ 今日行程 · 自动定位当天</div>
+            <div class="today-title"><span id="todayTitle">Day 1 · 北京 → 大连</span></div>
+            <div class="today-meals" id="todayMeals">
+                <span class="meal-item"><span class="meal-tag">早餐</span> <span class="editable-text" contenteditable="true">出发前解决</span></span>
+                <span class="meal-item"><span class="meal-tag">午餐</span> <span class="editable-text" contenteditable="true">海味当家 (海鲜蒸锅)</span></span>
+                <span class="meal-item"><span class="meal-tag">晚餐</span> <span class="editable-text" contenteditable="true">黑石礁夜市 · 烧烤焖子</span></span>
+            </div>
+            <div class="today-activity">🏃 <span class="editable-text" contenteditable="true" id="todayActivity">高铁 → 入住 → 星海广场夜景</span></div>
+            <div class="map-container" id="todayMapContainer">
+                <div class="map-placeholder" id="todayMapPlaceholder">
+                    <div class="big-icon">🗺️</div>
+                    <span>✨ 今日路线地图加载中...</span>
+                </div>
+            </div>
+            <div class="tip-banner">
+                <span class="tip-icon">⏰</span>
+                <span class="tip-text" id="tipText">💡 <strong>错峰建议：</strong>10月2日出发，10月6日上午返程。热门景点建议上午8-10点或下午3点后前往。</span>
+            </div>
+        </div>
+
+        <!-- ===== 网格 ===== -->
+        <div class="grid-2">
+
+            <!-- 交通 -->
+            <div class="card">
+                <div class="card-title">🚄 交通费用 <span class="tag">点击数字可修改</span></div>
+                <div class="price-row">
+                    <div class="price-item"><div class="route">北京→大连</div><input class="price-input" id="pBJDl" type="number" value="481" step="10" onchange="updateTransportTotal()"><div class="sub">高铁 · 二等座</div></div>
+                    <div class="price-item"><div class="route">大连→烟台</div><input class="price-input" id="pDlYt" type="number" value="280" step="10" onchange="updateTransportTotal()"><div class="sub">轮渡 · 三等舱</div></div>
+                    <div class="price-item"><div class="route">烟台→北京</div><input class="price-input" id="pYtBj" type="number" value="465" step="10" onchange="updateTransportTotal()"><div class="sub">高铁 · 二等座</div></div>
+                </div>
+                <div style="text-align:right; font-size:12px; color:#6a6a8a; margin-top:6px;">✨ 两人往返合计：<strong id="transportTotal">2452</strong> 元</div>
+            </div>
+
+            <!-- 天气 -->
+            <div class="card">
+                <div class="card-title">🌤️ 实时天气 <span class="tag" id="weatherStatus">已更新</span></div>
+                <div class="weather-row" id="weatherRow">
+                    <div class="weather-item"><div class="city">📍 大连</div><div class="temp" id="dlTemp">18°C</div><div class="desc" id="dlDesc">晴</div></div>
+                    <div class="weather-item"><div class="city">📍 烟台</div><div class="temp" id="ytTemp">20°C</div><div class="desc" id="ytDesc">多云</div></div>
+                    <div class="weather-item" style="background:rgba(74,122,216,0.06);"><div class="city">⛴️ 海上</div><div class="temp" id="seaTemp">16°C</div><div class="desc" id="seaDesc">海况平稳</div></div>
+                </div>
+            </div>
+
+            <!-- 酒店 -->
+            <div class="card full-width">
+                <div class="card-title">🏨 酒店推荐 <span class="tag">点击文字可修改</span></div>
+                <div class="hotel-grid">
+                    <div class="hotel-item"><div class="hotel-name"><span class="editable-text" contenteditable="true">🏙️ 大连君悦酒店</span></div><div class="hotel-city"><span class="editable-text" contenteditable="true">📍 星海广场 · 海景房</span></div><div class="hotel-desc"><span class="editable-text" contenteditable="true">步行可达星海广场，房间直面跨海大桥</span></div><div class="hotel-price"><span class="editable-text" contenteditable="true">💰 约 800-1200元/晚</span></div></div>
+                    <div class="hotel-item"><div class="hotel-name"><span class="editable-text" contenteditable="true">🏙️ 大连雅乐轩酒店</span></div><div class="hotel-city"><span class="editable-text" contenteditable="true">📍 中山广场 · 市中心</span></div><div class="hotel-desc"><span class="editable-text" contenteditable="true">交通便利，周边美食众多，性价比高</span></div><div class="hotel-price"><span class="editable-text" contenteditable="true">💰 约 400-600元/晚</span></div></div>
+                    <div class="hotel-item"><div class="hotel-name"><span class="editable-text" contenteditable="true">🏖️ 烟台金海岸希尔顿</span></div><div class="hotel-city"><span class="editable-text" contenteditable="true">📍 滨海路 · 海景</span></div><div class="hotel-desc"><span class="editable-text" contenteditable="true">近烟台山和月亮湾，度假感强</span></div><div class="hotel-price"><span class="editable-text" contenteditable="true">💰 约 600-900元/晚</span></div></div>
+                    <div class="hotel-item"><div class="hotel-name"><span class="editable-text" contenteditable="true">🏖️ 烟台亚朵酒店</span></div><div class="hotel-city"><span class="editable-text" contenteditable="true">📍 烟台站附近 · 市中心</span></div><div class="hotel-desc"><span class="editable-text" contenteditable="true">方便赶高铁，周边餐饮丰富</span></div><div class="hotel-price"><span class="editable-text" contenteditable="true">💰 约 350-500元/晚</span></div></div>
+                </div>
+            </div>
+
+            <!-- 每日行程（含路线地图） -->
+            <div class="card full-width">
+                <div class="card-title">🗺️ 完整行程路线 <span class="tag" id="planTag">大连→烟台</span></div>
+                <div id="itineraryContainer"></div>
+            </div>
+
+            <!-- 时间线 -->
+            <div class="card full-width">
+                <div class="card-title">⏳ 行程时间线 <span class="tag">点击文字修改</span></div>
+                <div id="timelineContainer"></div>
+            </div>
+
+            <!-- 花费 -->
+            <div class="card full-width">
+                <div class="card-title">📝 花费记录 <span style="font-weight:400; font-size:12px; color:#6a6a8a;">实时累计</span></div>
+                <div id="expenseList"></div>
+                <div class="add-expense">
+                    <input type="text" id="expenseDesc" placeholder="项目名称 (如: 浪漫晚餐)">
+                    <input type="number" id="expenseAmount" placeholder="金额" style="max-width:120px;">
+                    <button class="btn btn-primary" onclick="addExpense()">➕ 添加</button>
+                    <span style="margin-left:auto; font-weight:600; font-size:14px; color:#1a1a3e;">累计：<span id="expenseTotal">0</span> 元</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="text-align:center; color:rgba(255,255,255,0.7); font-size:12px; margin-top:12px; text-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            ✨ 点击任何文字修改 · 每条路线都有轨迹地图 · 可自由标点
         </div>
     </div>
 
-    <!-- ===== 一句话摘要 ===== -->
-    <div class="hero-summary" id="heroSummary">
-        <div>
-            <div class="main-text">
-                📍 距出发还有 <span class="highlight" id="heroDays">0</span> 天 ·
-                总预算 <span class="highlight" id="heroBudget">5800</span> 元 ·
-                剩余 <span class="highlight" id="heroRemain">5800</span> 元
-            </div>
-            <div class="sub-text" id="heroWeather">🌤️ 大连 18°C 晴 · 烟台 20°C 多云</div>
-        </div>
-        <div class="badge-group">
-            <div class="badge"><span class="num" id="badgeDays">6</span><span class="label">总天数</span></div>
-            <div class="badge"><span class="num" id="badgeSpent">0</span><span class="label">已花费</span></div>
-            <div class="badge"><span class="num" id="badgeRemainPct">100</span><span class="label">剩余%</span></div>
-        </div>
-    </div>
+    <script>
+        // ============================================================
+        //  行程方案（浪漫文案优化）
+        // ============================================================
+        const PLANS = {
+            'dl-yt': {
+                name: '大连→烟台',
+                itinerary: [
+                    { day: 'Day 1 · 初见大连 ✨', meals: ['☕ 高铁早餐/自带', '🍽️ 海味当家·海鲜蒸锅', '🌙 黑石礁夜市·烧烤焖子'], activity: '🚄 北京→大连高铁 → 入住海景酒店 → 星海广场散步看跨海大桥' },
+                    { day: 'Day 2 · 海岸漫步 💙', meals: ['🥛 酒店早餐/豆腐脑油条', '🦐 渔人码头·日丰园', '🥟 中原小吃街·海胆水饺'], activity: '🏞️ 滨海路徒步 → 燕窝岭 → 渔人码头拍照 → 威尼斯水城划船' },
+                    { day: 'Day 3 · 山海之约 🌊', meals: ['🥐 酒店早餐', '🍣 金石滩/旅顺海鲜', '🍱 市区日料/海鲜'], activity: '🌋 金石滩地质公园看奇石 或 🏯 旅顺参观军港和博物馆' },
+                    { day: 'Day 4 · 海上漂流 ⛴️', meals: ['🥐 酒店早餐', '🍜 市区简餐', '🍷 船上餐厅·甲板烧烤'], activity: '🚢 中山广场看欧式建筑 → 坐复古有轨电车 → 夜航轮渡去烟台' },
+                    { day: 'Day 5 · 烟台之恋 🌅', meals: ['🍜 蓬莱小面', '🦀 鲁凤炒鸡/胶东菜', '🦞 旺角小渔村'], activity: '🌅 轮渡上等海上日出 → 烟台山漫步看领事馆 → 月亮湾走走 → 所城里老街' },
+                    { day: 'Day 6 · 浪漫返程 💫', meals: ['🥐 酒店早餐', '🍜 烟台简餐', '🍱 高铁上/到家'], activity: '🚄 张裕酒文化博物馆品酒 → 烟台→北京高铁回家' }
+                ],
+                timeline: [
+                    { time: 'Day 1 下午', desc: '🚄 北京→大连，星海广场看夜景' },
+                    { time: 'Day 2 全天', desc: '🏞️ 滨海路·渔人码头·威尼斯水城' },
+                    { time: 'Day 3 全天', desc: '🌋 金石滩地质公园 或 🏯 旅顺' },
+                    { time: 'Day 4 晚间', desc: '🚢 夜航轮渡 大连→烟台 (住船上看星星)' },
+                    { time: 'Day 5 上午', desc: '🌅 烟台山·月亮湾·所城里' },
+                    { time: 'Day 6 下午', desc: '🚄 烟台→北京，带着回忆回家' }
+                ],
+                tip: '💡 <strong>浪漫贴士：</strong>10月2日出发避开高峰。大连滨海路建议傍晚散步看日落，轮渡上可以一起看星星和海上日出。'
+            },
+            'yt-dl': {
+                name: '烟台→大连',
+                itinerary: [
+                    { day: 'Day 1 · 初见烟台 🌊', meals: ['☕ 高铁早餐/自带', '🍲 烟台海鲜/鲁菜', '🌙 烟台山周边·海鲜大咖'], activity: '🚄 北京→烟台高铁 → 入住海景酒店 → 烟台山看夜景' },
+                    { day: 'Day 2 · 海岸漫步 💙', meals: ['🍜 蓬莱小面', '🦀 鲁凤炒鸡/胶东菜', '🦞 旺角小渔村'], activity: '🌅 烟台山看日出 → 月亮湾 → 滨海广场 → 所城里老街' },
+                    { day: 'Day 3 · 海岛之约 🏝️', meals: ['🥐 酒店早餐', '🍣 烟台特色简餐', '🍱 市区海鲜/鲁菜'], activity: '🏖️ 养马岛环岛骑行 或 🍷 张裕博物馆品酒 → 市区漫步' },
+                    { day: 'Day 4 · 海上漂流 ⛴️', meals: ['🥐 酒店早餐', '🍜 市区简餐', '🍷 船上餐厅·甲板烧烤'], activity: '🚢 烟台港登船 → 夜航轮渡去大连 → 甲板看星星' },
+                    { day: 'Day 5 · 大连之恋 🌅', meals: ['🍜 抵达后早餐', '🦐 渔人码头·日丰园', '🥟 中原小吃街·海胆水饺'], activity: '🌊 星海广场看海 → 滨海路漫步 → 渔人码头拍照' },
+                    { day: 'Day 6 · 浪漫返程 💫', meals: ['🥐 酒店早餐', '🍜 大连简餐', '🍱 高铁上/到家'], activity: '🚄 中山广场看欧式建筑 → 坐复古电车 → 大连→北京高铁' }
+                ],
+                timeline: [
+                    { time: 'Day 1 下午', desc: '🚄 北京→烟台，烟台山看夜景' },
+                    { time: 'Day 2 全天', desc: '🌅 烟台山·月亮湾·所城里' },
+                    { time: 'Day 3 全天', desc: '🏖️ 养马岛骑行 或 🍷 张裕博物馆' },
+                    { time: 'Day 4 晚间', desc: '🚢 夜航轮渡 烟台→大连 (住船上看星星)' },
+                    { time: 'Day 5 上午', desc: '🌊 星海广场·滨海路·渔人码头' },
+                    { time: 'Day 6 下午', desc: '🚄 大连→北京，带着回忆回家' }
+                ],
+                tip: '💡 <strong>浪漫贴士：</strong>10月2日出发避开高峰。烟台养马岛适合骑行约会，轮渡上可以一起等海上日出。'
+            }
+        };
 
-    <!-- ===== 核心数据卡片 ===== -->
-    <div class="stats-grid">
-        <div class="stat-card green"><div class="number" id="statDays">6</div><div class="label">📆 行程总天数</div></div>
-        <div class="stat-card blue"><div class="number" id="statBudget">5800</div><div class="label">💰 总预算 (元)</div></div>
-        <div class="stat-card orange"><div class="number" id="statSpent">0</div><div class="label">💸 已花费 (元)</div></div>
-        <div class="stat-card green"><div class="number" id="statRemain">5800</div><div class="label">✅ 剩余预算 (元)</div></div>
-        <div class="stat-card blue"><div class="number" id="statTransport">2452</div><div class="label">🚄 交通小计 (两人)</div></div>
-        <div class="stat-card blue"><div class="number" id="statWeather">--°C</div><div class="label">🌤️ 大连当前天气</div></div>
-    </div>
+        // ============================================================
+        //  坐标数据
+        // ============================================================
+        const COORDS = {
+            '北京': [116.40, 39.90],
+            '大连': [121.61, 38.91],
+            '烟台': [121.39, 37.54],
+            '星海广场': [121.59, 38.88],
+            '渔人码头': [121.69, 38.86],
+            '金石滩': [122.01, 39.08],
+            '旅顺': [121.26, 38.80],
+            '中山广场': [121.64, 38.92],
+            '烟台山': [121.40, 37.55],
+            '月亮湾': [121.44, 37.52],
+            '养马岛': [121.62, 37.47],
+            '张裕博物馆': [121.42, 37.54],
+            '滨海路': [121.64, 38.85],
+            '威尼斯水城': [121.72, 38.89],
+            '所城里': [121.42, 37.53],
+            '大连港': [121.66, 38.92],
+            '烟台港': [121.39, 37.55]
+        };
 
-    <!-- ===== 今日行程（置顶突出） ===== -->
-    <div class="today-card" id="todayCard">
-        <div class="today-label">📌 今日行程 · 自动定位当天</div>
-        <div class="today-title" id="todayTitle">Day 1 · 北京 → 大连</div>
-        <div class="today-meals" id="todayMeals">
-            <span class="meal-item"><span class="meal-tag">早餐</span> 出发前解决</span>
-            <span class="meal-item"><span class="meal-tag">午餐</span> 海味当家 (海鲜蒸锅)</span>
-            <span class="meal-item"><span class="meal-tag">晚餐</span> 黑石礁夜市 · 烧烤焖子</span>
-        </div>
-        <div class="today-activity" id="todayActivity">🏃 高铁 → 入住 → 星海广场夜景</div>
-    </div>
+        function getCoordForDay(day) {
+            const text = day.day + day.activity + day.meals.join('');
+            for (let [key, coord] of Object.entries(COORDS)) {
+                if (text.includes(key)) return coord;
+            }
+            // 默认返回大连
+            return COORDS['大连'];
+        }
 
-    <!-- ===== 网格 ===== -->
-    <div class="grid-2">
+        // ============================================================
+        //  状态
+        // ============================================================
+        let currentPlan = 'dl-yt';
+        const MEAL_LABELS = ['早餐', '午餐', '晚餐'];
+        let mapInstances = {};
+        let routeMarkers = {};
 
-        <!-- 交通价格 -->
-        <div class="card">
-            <div class="card-title">🚄 交通价格监测 <span class="tag" id="priceStatus">已更新</span></div>
-            <div class="price-row">
-                <div class="price-item"><div class="route">北京→大连</div><div class="price"><span id="pBJDl">481</span><span class="unit"> 元</span></div><div class="sub">高铁 · 二等座</div></div>
-                <div class="price-item"><div class="route">大连→烟台</div><div class="price"><span id="pDlYt">280</span><span class="unit"> 元</span></div><div class="sub">轮渡 · 三等舱</div></div>
-                <div class="price-item"><div class="route">烟台→北京</div><div class="price"><span id="pYtBj">465</span><span class="unit"> 元</span></div><div class="sub">高铁 · 二等座</div></div>
-            </div>
-            <div style="text-align:right; font-size:12px; color:#6f8f9a; margin-top:6px;">
-                💡 两人往返合计：<strong id="transportTotal">2452</strong> 元
-            </div>
-        </div>
+        let expenseData = [
+            { desc: '高铁票 (北京→大连)', amount: 600 },
+            { desc: '大连住宿 (3晚)', amount: 1200 },
+            { desc: '轮渡船票', amount: 400 },
+            { desc: '烟台住宿 (1晚)', amount: 400 },
+            { desc: '高铁票 (烟台→北京)', amount: 600 }
+        ];
 
-        <!-- 天气 -->
-        <div class="card">
-            <div class="card-title">🌤️ 实时天气 <span class="tag" id="weatherStatus">已更新</span></div>
-            <div class="weather-row" id="weatherRow">
-                <div class="weather-item"><div class="city">📍 大连</div><div class="temp" id="dlTemp">18°C</div><div class="desc" id="dlDesc">晴</div></div>
-                <div class="weather-item"><div class="city">📍 烟台</div><div class="temp" id="ytTemp">20°C</div><div class="desc" id="ytDesc">多云</div></div>
-                <div class="weather-item" style="background:#dce8ef;"><div class="city">⛴️ 海上</div><div class="temp" id="seaTemp">16°C</div><div class="desc" id="seaDesc">海况平稳</div></div>
-            </div>
-        </div>
+        // ============================================================
+        //  地图工具 - 创建路线轨迹
+        // ============================================================
+        function createRouteMap(containerId, points, label = '✨ 今日路线') {
+            if (typeof AMap === 'undefined') {
+                const el = document.getElementById(containerId);
+                if (el) {
+                    el.innerHTML = `<div class="map-placeholder"><div class="big-icon">🗺️</div><span>地图API加载中...</span></div>`;
+                }
+                return null;
+            }
 
-        <!-- 每日行程（完整列表） -->
-        <div class="card full-width">
-            <div class="card-title">🍽️ 完整行程 <span class="tag">含三餐推荐</span></div>
-            <div id="itineraryContainer"></div>
-        </div>
+            const container = document.getElementById(containerId);
+            if (!container) return null;
 
-        <!-- 时间线 -->
-        <div class="card full-width">
-            <div class="card-title">⏳ 行程时间线</div>
-            <div id="timelineContainer"></div>
-        </div>
+            // 清理旧地图
+            if (mapInstances[containerId]) {
+                try { mapInstances[containerId].destroy(); } catch (e) {}
+                delete mapInstances[containerId];
+            }
 
-        <!-- 花费记录 -->
-        <div class="card full-width">
-            <div class="card-title">📝 花费记录 <span style="font-weight:400; font-size:12px; color:#6f8f9a;">(实时累计)</span></div>
-            <div id="expenseList"></div>
-            <div class="add-expense">
-                <input type="text" id="expenseDesc" placeholder="项目名称">
-                <input type="number" id="expenseAmount" placeholder="金额" style="max-width:120px;">
-                <button class="btn btn-primary" onclick="addExpense()">➕ 添加</button>
-                <span style="margin-left:auto; font-weight:600; font-size:14px;">累计：<span id="expenseTotal">0</span> 元</span>
-            </div>
-        </div>
+            container.innerHTML = '';
 
-    </div>
+            // 如果只有一个点，用单点地图
+            if (points.length <= 1) {
+                const center = points.length === 1 ? points[0] : COORDS['大连'];
+                try {
+                    const map = new AMap.Map(container, {
+                        zoom: 12,
+                        center: center,
+                        mapStyle: 'amap://styles/fresh',
+                        viewMode: '2D',
+                        resizeEnable: true,
+                        zoomEnable: true,
+                        dragEnable: true
+                    });
+                    const marker = new AMap.Marker({
+                        position: center,
+                        title: label,
+                        label: { content: `<div style="background:#4a7ad8;color:white;padding:2px 12px;border-radius:20px;font-size:12px;font-weight:600;">${label}</div>`, direction: 'top' }
+                    });
+                    marker.setMap(map);
+                    mapInstances[containerId] = map;
+                    setTimeout(() => { try { map.setFitView(); } catch (e) {} }, 300);
+                    return map;
+                } catch (e) {
+                    container.innerHTML = `<div class="map-placeholder"><div class="big-icon">🗺️</div><span>地图加载失败</span></div>`;
+                    return null;
+                }
+            }
 
-    <div style="text-align:center; color:#6f8f9a; font-size:12px; margin-top:12px;">
-        💾 数据自动保存在浏览器本地 · 刷新页面不丢失
-    </div>
-</div>
+            // 多个点：绘制路线轨迹
+            try {
+                const map = new AMap.Map(container, {
+                    zoom: 10,
+                    center: points[0],
+                    mapStyle: 'amap://styles/fresh',
+                    viewMode: '2D',
+                    resizeEnable: true,
+                    zoomEnable: true,
+                    dragEnable: true
+                });
 
-<script>
-// ============================================================
-//  数据
-// ============================================================
-const ITINERARY = [
-    { day: 'Day 1 · 北京 → 大连', meals: ['出发前解决', '海味当家 (海鲜蒸锅)', '黑石礁夜市 · 烧烤焖子'], activity: '🚄 高铁 → 入住 → 星海广场夜景' },
-    { day: 'Day 2 · 大连海岸', meals: ['酒店/豆腐脑油条', '渔人码头 · 日丰园', '中原小吃街 · 海胆水饺'], activity: '🏞️ 滨海路 → 渔人码头 → 威尼斯水城' },
-    { day: 'Day 3 · 大连深度', meals: ['酒店早餐', '金石滩/旅顺海鲜', '市区日料/海鲜'], activity: '🌋 金石滩 或 🏯 旅顺 (二选一)' },
-    { day: 'Day 4 · 轮渡之夜', meals: ['酒店早餐', '市区简餐', '船上餐厅'], activity: '🚢 中山广场 → 复古电车 → 夜航轮渡' },
-    { day: 'Day 5 · 烟台', meals: ['蓬莱小面', '鲁凤炒鸡/胶东菜', '旺角小渔村'], activity: '🌅 海上日出 → 烟台山 → 月亮湾 → 所城里' },
-    { day: 'Day 6 · 返程', meals: ['酒店/当地早点', '烟台简餐', '高铁上/到家'], activity: '🚄 张裕博物馆 → 烟台→北京高铁' }
-];
+                // 绘制轨迹线
+                const polyline = new AMap.Polyline({
+                    path: points,
+                    strokeColor: '#4a7ad8',
+                    strokeWeight: 4,
+                    strokeStyle: 'solid',
+                    lineJoin: 'round',
+                    lineCap: 'round',
+                    strokeOpacity: 0.8
+                });
+                polyline.setMap(map);
 
-const TIMELINE = [
-    { time: 'Day 1 下午', desc: '🚄 北京→大连，星海广场夜景' },
-    { time: 'Day 2 全天', desc: '🏞️ 滨海路 · 渔人码头 · 威尼斯水城' },
-    { time: 'Day 3 全天', desc: '🌋 金石滩 或 🏯 旅顺' },
-    { time: 'Day 4 晚间', desc: '🚢 夜航轮渡 大连→烟台 (住船上)' },
-    { time: 'Day 5 上午', desc: '🌅 烟台山 · 月亮湾' },
-    { time: 'Day 6 下午', desc: '🚄 烟台→北京' }
-];
+                // 添加起终点标记
+                const startMarker = new AMap.Marker({
+                    position: points[0],
+                    title: '起点',
+                    label: { content: '📍 起点', direction: 'top' }
+                });
+                startMarker.setMap(map);
 
-const MEAL_LABELS = ['早餐', '午餐', '晚餐'];
+                const endMarker = new AMap.Marker({
+                    position: points[points.length - 1],
+                    title: '终点',
+                    label: { content: '🏁 终点', direction: 'top' }
+                });
+                endMarker.setMap(map);
 
-let expenseData = [
-    { desc: '高铁票 (北京→大连)', amount: 600 },
-    { desc: '大连住宿 (3晚)', amount: 1200 },
-    { desc: '轮渡船票', amount: 400 },
-    { desc: '烟台住宿 (1晚)', amount: 400 },
-    { desc: '高铁票 (烟台→北京)', amount: 600 }
-];
+                // 添加中间点标记（带序号）
+                points.forEach((p, idx) => {
+                    if (idx > 0 && idx < points.length - 1) {
+                        const m = new AMap.Marker({
+                            position: p,
+                            title: `第${idx+1}站`,
+                            label: { content: `📍 ${idx+1}`, direction: 'top' }
+                        });
+                        m.setMap(map);
+                    }
+                });
 
-// ============================================================
-//  今日行程（自动定位）
-// ============================================================
-function getTodayIndex() {
-    // 假设10月1日出发，今天日期计算偏移
-    const start = new Date(2026, 9, 1); // 10月1日
-    const now = new Date();
-    const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-    // 限制在 0 ~ 5 之间
-    return Math.max(0, Math.min(diff, 5));
-}
-
-function renderToday() {
-    const idx = getTodayIndex();
-    const day = ITINERARY[idx];
-    document.getElementById('todayTitle').textContent = day.day;
-    document.getElementById('todayMeals').innerHTML = day.meals.map((m, i) =>
-        `<span class="meal-item"><span class="meal-tag">${MEAL_LABELS[i]}</span> ${m}</span>`
-    ).join('');
-    document.getElementById('todayActivity').textContent = '🏃 ' + day.activity;
-}
-
-// ============================================================
-//  渲染完整行程
-// ============================================================
-function renderItinerary() {
-    const container = document.getElementById('itineraryContainer');
-    let html = '';
-    ITINERARY.forEach((day, idx) => {
-        const isToday = idx === getTodayIndex();
-        html += `<div class="day-block" style="${isToday ? 'background:#f0f8fb;border-radius:8px;padding:8px 12px;' : ''}">
-            <div class="day-title">
-                <span>${day.day}</span>
-                ${isToday ? '<span style="font-size:11px;background:#1f5a6b;color:white;padding:0 12px;border-radius:30px;">📍 今天</span>' : ''}
-            </div>
-            <div class="day-detail">
-                ${day.meals.map((m, i) => `<div><span class="meal-label">${MEAL_LABELS[i]}</span> ${m}</div>`).join('')}
-                <div style="margin-top:4px;color:#1f5a6b;">🏃 ${day.activity}</div>
-            </div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
-
-// ============================================================
-//  渲染时间线
-// ============================================================
-function renderTimeline() {
-    const container = document.getElementById('timelineContainer');
-    container.innerHTML = TIMELINE.map(item =>
-        `<div class="tl-item"><span class="tl-time">${item.time}</span><span>${item.desc}</span></div>`
-    ).join('');
-}
-
-// ============================================================
-//  渲染花费
-// ============================================================
-function renderExpenses() {
-    const container = document.getElementById('expenseList');
-    if (expenseData.length === 0) {
-        container.innerHTML = '<div style="color:#6f8f9a; text-align:center; padding:6px;">暂无记录</div>';
-    } else {
-        container.innerHTML = expenseData.map((item, idx) =>
-            `<div class="expense-item">
-                <span>${item.desc}</span>
-                <span>
-                    <span style="font-weight:600;">${item.amount}</span> 元
-                    <span class="del" onclick="deleteExpense(${idx})">✕</span>
-                </span>
-            </div>`
-        ).join('');
-    }
-    updateTotals();
-}
-
-function updateTotals() {
-    const total = expenseData.reduce((s, e) => s + e.amount, 0);
-    document.getElementById('expenseTotal').textContent = total;
-    document.getElementById('statSpent').textContent = total;
-    const budget = parseInt(document.getElementById('statBudget').textContent) || 5800;
-    const remain = Math.max(0, budget - total);
-    document.getElementById('statRemain').textContent = remain;
-    document.getElementById('heroRemain').textContent = remain;
-    document.getElementById('badgeSpent').textContent = total;
-    const pct = budget > 0 ? Math.round((remain / budget) * 100) : 0;
-    document.getElementById('badgeRemainPct').textContent = pct;
-
-    // 动态变色
-    const remainEl = document.getElementById('statRemain');
-    const pctNum = (remain / budget) * 100;
-    remainEl.parentElement.className = 'stat-card ' + (pctNum > 30 ? 'green' : pctNum > 10 ? 'orange' : 'red');
-}
-
-function addExpense() {
-    const desc = document.getElementById('expenseDesc').value.trim();
-    const amount = parseFloat(document.getElementById('expenseAmount').value);
-    if (!desc || isNaN(amount) || amount <= 0) { alert('请输入有效项目和金额'); return; }
-    expenseData.push({ desc, amount });
-    document.getElementById('expenseDesc').value = '';
-    document.getElementById('expenseAmount').value = '';
-    renderExpenses();
-    saveToStorage();
-}
-
-function deleteExpense(idx) {
-    expenseData.splice(idx, 1);
-    renderExpenses();
-    saveToStorage();
-}
-
-// ============================================================
-//  价格
-// ============================================================
-function refreshPrices() {
-    const prices = { bjDl: 481, dlYt: 280, ytBj: 465 };
-    document.getElementById('pBJDl').textContent = prices.bjDl;
-    document.getElementById('pDlYt').textContent = prices.dlYt;
-    document.getElementById('pYtBj').textContent = prices.ytBj;
-    const total = (prices.bjDl + prices.ytBj) * 2 + prices.dlYt * 2;
-    document.getElementById('transportTotal').textContent = total;
-    document.getElementById('statTransport').textContent = total;
-    document.getElementById('priceStatus').textContent = '已更新';
-}
-
-// ============================================================
-//  天气
-// ============================================================
-function refreshWeather() {
-    // 模拟天气数据（实际可用高德插件）
-    const weather = {
-        dl: { temp: 18, desc: '晴' },
-        yt: { temp: 20, desc: '多云' }
-    };
-    document.getElementById('dlTemp').textContent = weather.dl.temp + '°C';
-    document.getElementById('dlDesc').textContent = weather.dl.desc;
-    document.getElementById('ytTemp').textContent = weather.yt.temp + '°C';
-    document.getElementById('ytDesc').textContent = weather.yt.desc;
-    document.getElementById('seaTemp').textContent = (weather.dl.temp - 2) + '°C';
-    document.getElementById('seaDesc').textContent = '海况平稳';
-    document.getElementById('statWeather').textContent = weather.dl.temp + '°C';
-    document.getElementById('weatherStatus').textContent = '已更新';
-    document.getElementById('heroWeather').textContent =
-        `🌤️ 大连 ${weather.dl.temp}°C ${weather.dl.desc} · 烟台 ${weather.yt.temp}°C ${weather.yt.desc}`;
-}
-
-// ============================================================
-//  Hero 摘要更新
-// ============================================================
-function updateHero() {
-    const start = new Date(2026, 9, 1);
-    const now = new Date();
-    const diff = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
-    document.getElementById('heroDays').textContent = Math.max(0, diff);
-    const budget = parseInt(document.getElementById('statBudget').textContent) || 5800;
-    document.getElementById('heroBudget').textContent = budget;
-    document.getElementById('badgeDays').textContent = 6;
-}
-
-// ============================================================
-//  导出 / 重置
-// ============================================================
-function exportData() {
-    const data = {
-        expenses: expenseData,
-        exportTime: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `trip_data_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-}
-
-function resetAll() {
-    if (!confirm('重置所有数据（包括花费记录）？')) return;
-    expenseData = [
-        { desc: '高铁票 (北京→大连)', amount: 600 },
-        { desc: '大连住宿 (3晚)', amount: 1200 },
-        { desc: '轮渡船票', amount: 400 },
-        { desc: '烟台住宿 (1晚)', amount: 400 },
-        { desc: '高铁票 (烟台→北京)', amount: 600 }
-    ];
-    renderExpenses();
-    saveToStorage();
-    refreshPrices();
-    refreshWeather();
-    updateHero();
-}
-
-// ============================================================
-//  存储
-// ============================================================
-function saveToStorage() {
-    localStorage.setItem('trip_board_expenses_v2', JSON.stringify(expenseData));
-}
-
-function loadFromStorage() {
-    try {
-        const raw = localStorage.getItem('trip_board_expenses_v2');
-        if (raw) {
-            const data = JSON.parse(raw);
-            if (Array.isArray(data) && data.length > 0) {
-                expenseData = data;
+                mapInstances[containerId] = map;
+                setTimeout(() => { try { map.setFitView(); } catch (e) {} }, 300);
+                return map;
+            } catch (e) {
+                container.innerHTML = `<div class="map-placeholder"><div class="big-icon">🗺️</div><span>地图加载失败</span></div>`;
+                return null;
             }
         }
-    } catch(e) {}
-}
 
-// ============================================================
-//  初始化
-// ============================================================
-loadFromStorage();
-renderToday();
-renderItinerary();
-renderTimeline();
-renderExpenses();
-refreshPrices();
-refreshWeather();
-updateHero();
+        // ============================================================
+        //  初始化每日地图
+        // ============================================================
+        function initDailyMap(containerId, day) {
+            const coords = getCoordForDay(day);
+            // 尝试从行程中提取多个地点
+            const text = day.day + day.activity + day.meals.join('');
+            const foundPoints = [];
+            for (let [key, coord] of Object.entries(COORDS)) {
+                if (text.includes(key)) {
+                    foundPoints.push(coord);
+                }
+            }
+            // 去重
+            const uniquePoints = [];
+            const seen = new Set();
+            for (let p of foundPoints) {
+                const key = p.join(',');
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    uniquePoints.push(p);
+                }
+            }
+            const points = uniquePoints.length > 0 ? uniquePoints : [coords];
+            createRouteMap(containerId, points, '✨ ' + day.day.replace('💕', '').trim());
+        }
 
-console.log('✅ 优化版旅行看板已加载！');
-console.log('📌 今日行程自动定位 Day', getTodayIndex() + 1);
-</script>
+        // ============================================================
+        //  方案切换
+        // ============================================================
+        function switchPlan(planKey) {
+            currentPlan = planKey;
+            document.querySelectorAll('.btn-plan').forEach(b => b.classList.toggle('active', b.dataset.plan === planKey));
+            document.getElementById('planTag').textContent = PLANS[planKey].name;
+            renderItinerary(planKey);
+            renderTimeline(planKey);
+            renderToday(planKey);
+            document.getElementById('tipText').innerHTML = PLANS[planKey].tip;
+            savePlanToStorage(planKey);
+        }
+
+        // ============================================================
+        //  今日行程
+        // ============================================================
+        function getTodayIndex(planKey) {
+            const start = new Date(2026, 9, 1);
+            const now = new Date();
+            const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+            return Math.max(0, Math.min(diff, 5));
+        }
+
+        function renderToday(planKey) {
+            const plan = PLANS[planKey];
+            const idx = getTodayIndex(planKey);
+            const day = plan.itinerary[idx];
+            document.getElementById('todayTitle').textContent = day.day;
+            document.getElementById('todayActivity').textContent = day.activity;
+            const items = document.querySelectorAll('#todayMeals .meal-item .editable-text');
+            day.meals.forEach((m, i) => { if (items[i]) items[i].textContent = m; });
+            setTimeout(() => { initDailyMap('todayMapContainer', day); }, 400);
+        }
+
+        // ============================================================
+        //  渲染行程
+        // ============================================================
+        function renderItinerary(planKey) {
+            const plan = PLANS[planKey];
+            const container = document.getElementById('itineraryContainer');
+            let html = '';
+            plan.itinerary.forEach((day, idx) => {
+                const isToday = idx === getTodayIndex(planKey);
+                const mapId = 'daymap_' + idx;
+                html += `
+                    <div class="day-block" style="${isToday ? 'background:rgba(74,122,216,0.04);border-radius:12px;' : ''}">
+                        <div class="day-header">
+                            <div class="day-title">${day.day} ${isToday ? '✨ 今天' : ''}</div>
+                            <span style="font-size:11px;color:#6a6a8a;">🗺️ 拖动地图查看路线</span>
+                        </div>
+                        <div class="day-detail">
+                            ${day.meals.map((m, i) => `<div><span class="meal-label">${MEAL_LABELS[i]}</span> <span class="editable-text" contenteditable="true">${m}</span></div>`).join('')}
+                            <div style="margin-top:4px;color:#4a7ad8;">🏃 <span class="editable-text" contenteditable="true">${day.activity}</span></div>
+                        </div>
+                        <div class="day-map-container" id="${mapId}">
+                            <div class="map-placeholder"><div class="big-icon">🗺️</div><span>✨ 路线加载中...</span></div>
+                        </div>
+                        <div class="map-actions">
+                            <button class="btn-small" onclick="refreshDayMap('${mapId}', ${idx})">🔄 刷新地图</button>
+                            <button class="btn-small" onclick="addMarkerToDay('${mapId}', ${idx})">📍 添加标记</button>
+                            <button class="btn-small" onclick="clearMarkers('${mapId}')">🗑️ 清除标记</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            // 初始化每个地图
+            setTimeout(() => {
+                plan.itinerary.forEach((day, idx) => {
+                    setTimeout(() => {
+                        const mapId = 'daymap_' + idx;
+                        const el = document.getElementById(mapId);
+                        if (el) {
+                            initDailyMap(mapId, day);
+                        }
+                    }, idx * 300);
+                });
+            }, 400);
+        }
+
+        // ============================================================
+        //  地图操作函数
+        // ============================================================
+        function refreshDayMap(mapId, idx) {
+            const plan = PLANS[currentPlan];
+            const day = plan.itinerary[idx];
+            initDailyMap(mapId, day);
+        }
+
+        function addMarkerToDay(mapId, idx) {
+            const map = mapInstances[mapId];
+            if (!map) { alert('✨ 请先等待地图加载完成'); return; }
+            const text = prompt('📍 输入标记名称 (如: 我们合影的地方)');
+            if (!text) return;
+            const center = map.getCenter();
+            if (!center) { alert('无法获取地图中心位置'); return; }
+            try {
+                const marker = new AMap.Marker({
+                    position: [center.getLng(), center.getLat()],
+                    title: text,
+                    label: { content: `❤️ ${text}`, direction: 'top' }
+                });
+                marker.setMap(map);
+                if (!routeMarkers[mapId]) routeMarkers[mapId] = [];
+                routeMarkers[mapId].push(marker);
+                alert(`✅ 已标记 "${text}"`);
+            } catch (e) {
+                alert('标记失败，请重试');
+            }
+        }
+
+        function clearMarkers(mapId) {
+            if (!routeMarkers[mapId] || routeMarkers[mapId].length === 0) {
+                alert('✨ 还没有添加标记');
+                return;
+            }
+            if (!confirm('清除所有自定义标记？')) return;
+            routeMarkers[mapId].forEach(m => {
+                try { m.setMap(null); } catch (e) {}
+            });
+            routeMarkers[mapId] = [];
+            alert('✅ 已清除所有标记');
+        }
+
+        function renderTimeline(planKey) {
+            const plan = PLANS[planKey];
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = plan.timeline.map(item =>
+                `<div class="tl-item"><span class="tl-time">${item.time}</span><span class="tl-desc-editable" contenteditable="true">${item.desc}</span></div>`
+            ).join('');
+        }
+
+        // ============================================================
+        //  花费
+        // ============================================================
+        function renderExpenses() {
+            const container = document.getElementById('expenseList');
+            if (expenseData.length === 0) {
+                container.innerHTML = '<div style="color:#6a6a8a;text-align:center;padding:6px;">✨ 还没有花费记录</div>';
+            } else {
+                container.innerHTML = expenseData.map((item, idx) =>
+                    `<div class="expense-item">
+                        <span class="expense-desc-editable" contenteditable="true">${item.desc}</span>
+                        <span>
+                            <input class="expense-amount-input" type="number" value="${item.amount}" data-idx="${idx}" step="10">
+                            <span class="del" onclick="deleteExpense(${idx})">✕</span>
+                        </span>
+                    </div>`
+                ).join('');
+            }
+            document.querySelectorAll('.expense-amount-input').forEach(el => {
+                el.addEventListener('change', function() {
+                    const idx = parseInt(this.dataset.idx);
+                    expenseData[idx].amount = parseFloat(this.value) || 0;
+                    saveToStorage();
+                    updateTotals();
+                });
+            });
+            document.querySelectorAll('.expense-desc-editable').forEach((el, idx) => {
+                el.addEventListener('blur', function() {
+                    expenseData[idx].desc = this.textContent.trim() || '未命名项目';
+                    saveToStorage();
+                });
+            });
+            updateTotals();
+        }
+
+        function updateTotals() {
+            const total = expenseData.reduce((s, e) => s + e.amount, 0);
+            document.getElementById('expenseTotal').textContent = total;
+            document.getElementById('statSpent').textContent = total;
+            const budget = parseInt(document.getElementById('statBudget').textContent) || 5800;
+            const remain = Math.max(0, budget - total);
+            document.getElementById('statRemain').textContent = remain;
+            document.getElementById('heroRemain').textContent = remain;
+            document.getElementById('badgeSpent').textContent = total;
+            const pct = budget > 0 ? Math.round((remain / budget) * 100) : 0;
+            document.getElementById('badgeRemainPct').textContent = pct;
+            const pctNum = (remain / budget) * 100;
+            const el = document.getElementById('statRemain');
+            el.parentElement.className = 'stat-card ' + (pctNum > 30 ? 'green' : pctNum > 10 ? 'orange' : 'blue');
+        }
+
+        function addExpense() {
+            const desc = document.getElementById('expenseDesc').value.trim() || '✨ 新项目';
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            if (isNaN(amount) || amount <= 0) { alert('✨ 请输入有效金额'); return; }
+            expenseData.push({ desc, amount });
+            document.getElementById('expenseDesc').value = '';
+            document.getElementById('expenseAmount').value = '';
+            renderExpenses();
+            saveToStorage();
+        }
+
+        function deleteExpense(idx) {
+            expenseData.splice(idx, 1);
+            renderExpenses();
+            saveToStorage();
+        }
+
+        // ============================================================
+        //  交通 / 天气 / 其他
+        // ============================================================
+        function updateTransportTotal() {
+            const p1 = parseFloat(document.getElementById('pBJDl').value) || 0;
+            const p2 = parseFloat(document.getElementById('pDlYt').value) || 0;
+            const p3 = parseFloat(document.getElementById('pYtBj').value) || 0;
+            const total = (p1 + p3) * 2 + p2 * 2;
+            document.getElementById('transportTotal').textContent = total;
+            document.getElementById('statTransport').textContent = total;
+        }
+
+        function refreshWeather() {
+            const w = { dl: { temp: 18, desc: '晴' }, yt: { temp: 20, desc: '多云' } };
+            document.getElementById('dlTemp').textContent = w.dl.temp + '°C';
+            document.getElementById('dlDesc').textContent = w.dl.desc;
+            document.getElementById('ytTemp').textContent = w.yt.temp + '°C';
+            document.getElementById('ytDesc').textContent = w.yt.desc;
+            document.getElementById('seaTemp').textContent = (w.dl.temp - 2) + '°C';
+            document.getElementById('seaDesc').textContent = '海况平稳';
+            document.getElementById('statWeather').textContent = w.dl.temp + '°C';
+            document.getElementById('weatherStatus').textContent = '已更新';
+            document.getElementById('heroWeather').textContent = `🌤️ 大连 ${w.dl.temp}°C ${w.dl.desc} · 烟台 ${w.yt.temp}°C ${w.yt.desc}`;
+        }
+
+        function updateHero() {
+            const start = new Date(2026, 9, 1);
+            const now = new Date();
+            const diff = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+            document.getElementById('heroDays').textContent = Math.max(0, diff);
+            document.getElementById('badgeDays').textContent = 6;
+        }
+
+        function exportData() {
+            const data = {
+                plan: currentPlan,
+                expenses: expenseData,
+                transport: { bjDl: document.getElementById('pBJDl').value, dlYt: document.getElementById('pDlYt').value, ytBj: document.getElementById('pYtBj').value },
+                exportTime: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `trip_data_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+
+        function resetAll() {
+            if (!confirm('✨ 重置所有数据？')) return;
+            expenseData = [
+                { desc: '高铁票 (北京→大连)', amount: 600 },
+                { desc: '大连住宿 (3晚)', amount: 1200 },
+                { desc: '轮渡船票', amount: 400 },
+                { desc: '烟台住宿 (1晚)', amount: 400 },
+                { desc: '高铁票 (烟台→北京)', amount: 600 }
+            ];
+            document.getElementById('pBJDl').value = 481;
+            document.getElementById('pDlYt').value = 280;
+            document.getElementById('pYtBj').value = 465;
+            renderExpenses();
+            updateTransportTotal();
+            refreshWeather();
+            updateHero();
+            if (currentPlan !== 'dl-yt') switchPlan('dl-yt');
+            else { renderItinerary('dl-yt');
+                renderTimeline('dl-yt');
+                renderToday('dl-yt'); }
+            saveToStorage();
+        }
+
+        function saveToStorage() { localStorage.setItem('trip_board_expenses_v5', JSON.stringify(expenseData)); }
+
+        function savePlanToStorage(k) { localStorage.setItem('trip_board_plan_v5', k); }
+
+        function loadPlanFromStorage() {
+            try { const p = localStorage.getItem('trip_board_plan_v5'); if (p && PLANS[p]) return p; } catch (e) {}
+            return 'dl-yt';
+        }
+
+        function loadFromStorage() {
+            try { const r = localStorage.getItem('trip_board_expenses_v5'); if (r) { const d = JSON.parse(r); if (Array.isArray(d) && d.length > 0) expenseData = d; } } catch (e) {}
+        }
+
+        // ============================================================
+        //  初始化
+        // ============================================================
+        loadFromStorage();
+        const saved = loadPlanFromStorage();
+        currentPlan = saved;
+        document.querySelectorAll('.btn-plan').forEach(b => b.classList.toggle('active', b.dataset.plan === saved));
+        document.getElementById('planTag').textContent = PLANS[saved].name;
+        document.getElementById('tipText').innerHTML = PLANS[saved].tip;
+        renderItinerary(saved);
+        renderTimeline(saved);
+        renderToday(saved);
+        renderExpenses();
+        updateTransportTotal();
+        refreshWeather();
+        updateHero();
+
+        // 窗口resize刷新地图
+        window.addEventListener('resize', () => {
+            Object.keys(mapInstances).forEach(k => { try { mapInstances[k].setFitView(); } catch (e) {} });
+        });
+
+        console.log('✨ 浪漫旅行看板已加载！每条路线都有轨迹地图，可自由标点 💙');
+    </script>
 </body>
 </html>
