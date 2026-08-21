@@ -1,0 +1,8 @@
+{
+    "name": "travel-board",
+    "version": "1.0.0",
+    "description": "🐷 大连·烟台 旅行足迹看板",
+    "dependencies": {
+        "@google/genai": "^0.7.0"
+    }
+}
