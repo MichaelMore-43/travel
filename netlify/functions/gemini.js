@@ -11,7 +11,8 @@ exports.handler = async (event, context) => {
     }
 
     try {
-        const { prompt } = JSON.parse(event.body);
+        // 🔥 关键改动：接收 model 和 context
+        const { prompt, context, model } = JSON.parse(event.body);
 
         if (!prompt) {
             return {
@@ -31,31 +32,29 @@ exports.handler = async (event, context) => {
 
         const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
+        // 🔥 构建带上下文的提示词
+        let fullPrompt = `你是一个旅行助手，叫"小猪旅行助手"。用户正在计划去大连和烟台的旅行。`;
+
+        if (context) {
+            fullPrompt += `\n\n以下是你们之前的对话记录（按时间顺序）：\n${context}\n\n`;
+        }
+
+        fullPrompt += `请根据上下文回答用户的最新问题。如果你看到之前的对话中有相关内容，请连贯地继续对话。\n\n用户最新的问题是：${prompt}`;
+
+        // 🔥 使用前端传过来的模型，如果没有则用默认
+        const modelName = model || 'gemini-3.5-flash';
+
         const response = await ai.models.generateContent({
-            // ⭐ 关键修复：改用 gemini-3.6-flash
-            model: 'gemini-3.6-flash',
+            model: modelName,
             contents: [
                 {
                     role: 'user',
-                    parts: [
-                        {
-                            text: `你是一个旅行助手，叫"小猪旅行助手"。用户正在计划去大连和烟台的旅行。
-
-要求：
-1. 用中文回答
-2. 语气亲切、简洁、实用
-3. 回答控制在150-200字之间
-4. 必须把话说完，不要中途截断
-5. 如果问题很简短，回答也简短；如果问题需要展开，回答最多200字
-
-用户的问题是：${prompt}`
-                        }
-                    ]
+                    parts: [{ text: fullPrompt }]
                 }
             ],
             config: {
                 temperature: 0.7,
-                maxOutputTokens: 1500,
+                maxOutputTokens: 1500,  // 足够长
             }
         });
 
