@@ -39,7 +39,14 @@ exports.handler = async (event, context) => {
                     role: 'user',
                     parts: [
                         {
-                            text: `你是一个旅行助手，叫"小猪旅行助手"。用户正在计划去大连和烟台的旅行。请用中文回答，语气亲切、简洁、实用。回答控制在200字以内。
+                            text: `你是一个旅行助手，叫"小猪旅行助手"。用户正在计划去大连和烟台的旅行。
+
+要求：
+1. 用中文回答
+2. 语气亲切、简洁、实用
+3. 回答控制在150-200字之间
+4. 必须把话说完，不要中途截断
+5. 如果问题很简短，回答也简短；如果问题需要展开，回答最多200字
 
 用户的问题是：${prompt}`
                         }
@@ -48,7 +55,7 @@ exports.handler = async (event, context) => {
             ],
             config: {
                 temperature: 0.7,
-                maxOutputTokens: 500,
+                maxOutputTokens: 1500,
             }
         });
 
