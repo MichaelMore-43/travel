@@ -1,18 +1,5 @@
 // netlify/functions/gemini.js
-// 注意：这是一个 Netlify Function，运行在 Netlify 的服务端
-
 const { GoogleGenAI } = require('@google/genai');
-
-// 从环境变量读取 API Key（在 Netlify 控制台配置）
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!GEMINI_API_KEY) {
-    console.warn('⚠️ GEMINI_API_KEY 环境变量未设置');
-}
-
-const ai = new GoogleGenAI({
-    apiKey: GEMINI_API_KEY,
-});
 
 exports.handler = async (event, context) => {
     // 只允许 POST
@@ -33,16 +20,20 @@ exports.handler = async (event, context) => {
             };
         }
 
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
         if (!GEMINI_API_KEY) {
             return {
                 statusCode: 500,
-                body: JSON.stringify({ success: false, error: '服务器未配置 API Key，请在 Netlify 环境变量中设置 GEMINI_API_KEY' })
+                body: JSON.stringify({ success: false, error: '未配置 GEMINI_API_KEY 环境变量' })
             };
         }
 
-        // 调用 Gemini API
+        const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            // ⭐ 关键修复：改用 gemini-3.6-flash
+            model: 'gemini-3.6-flash',
             contents: [
                 {
                     role: 'user',
