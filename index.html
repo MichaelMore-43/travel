@@ -3,958 +3,1179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>🌊 大连·烟台 浪漫旅行看板</title>
-    <!-- 高德地图 JS API -->
-    <script src="https://webapi.amap.com/maps?v=2.0&key=62088fab4daba4586f4fd36d250047a1&plugin=AMap.Weather,AMap.MarkerClusterer"></script>
+    <title>🐷 大连·烟台 旅行足迹</title>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=62088fab4daba4586f4fd36d250047a1&plugin=AMap.Weather"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
-            padding: 16px;
-            color: #1a1a3e;
+            background: #e8edf5;
+            color: #1a2a3e;
             min-height: 100vh;
-            background-image: url('https://images.unsplash.com/photo-1542370282-1f7a1008d629?w=1600&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            position: relative;
         }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(42, 74, 138, 0.60) 0%, rgba(108, 94, 207, 0.55) 100%);
-            z-index: 0;
-            pointer-events: none;
-        }
-        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
-
-        /* ===== 顶部 ===== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
         .header {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(12px);
-            border-radius: 24px;
+            background: linear-gradient(135deg, #1a3a6a 0%, #3a5a9a 100%);
+            border-radius: 20px;
             padding: 16px 24px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
-            border: 1px solid rgba(255,255,255,0.25);
-            box-shadow: 0 4px 24px rgba(42,74,138,0.15);
-        }
-        .header h1 {
-            font-size: 22px;
             color: white;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(26,58,106,0.25);
         }
-        .header h1 small { font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 400; }
+        .header h1 { font-size: 22px; display: flex; align-items: center; gap: 8px; }
+        .header h1 .pig { font-size: 28px; animation: wiggle 2s ease-in-out infinite; }
+        .header h1 small { font-size: 13px; font-weight: 400; opacity: 0.8; }
         .header-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .btn {
-            padding: 6px 16px;
-            border: none;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.2s;
+            padding: 5px 16px; border: none; border-radius: 30px; font-weight: 600; font-size: 12px;
+            cursor: pointer; transition: 0.2s;
         }
-        .btn-white { background: rgba(255,255,255,0.9); color: #2a4a8a; }
-        .btn-white:hover { background: white; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,74,138,0.25); }
-        .btn-outline-white { background: rgba(255,255,255,0.12); color: white; border: 1.5px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px); }
-        .btn-outline-white:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .btn-white { background: white; color: #1a3a6a; }
+        .btn-white:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .btn-outline { background: rgba(255,255,255,0.1); color: white; border: 1.5px solid rgba(255,255,255,0.2); }
+        .btn-outline:hover { background: rgba(255,255,255,0.2); }
         .btn-primary { background: #4a7ad8; color: white; }
-        .btn-primary:hover { background: #3a68c0; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74,122,216,0.4); }
+        .btn-primary:hover { background: #3a68c0; transform: translateY(-2px); }
+        .btn-sm {
+            padding: 3px 12px; border: none; border-radius: 30px; font-size: 11px; cursor: pointer; transition: 0.2s;
+            background: #e8edf5; color: #1a2a3e;
+        }
+        .btn-sm:hover { background: #d0d8e8; }
+        .btn-sm.primary { background: #4a7ad8; color: white; }
+        .btn-sm.primary:hover { background: #3a68c0; }
+        .btn-sm.pig { background: #f5d0c0; color: #8a4a3a; }
+        .btn-sm.pig:hover { background: #e8c0b0; }
+        .btn-sm.danger { background: #f0e0e0; color: #b35a5a; }
+        .btn-sm.danger:hover { background: #e8c8c8; }
+        .btn-sm.success { background: #4a9e7a; color: white; }
+        .btn-sm.success:hover { background: #3a8a6a; }
         .plan-switcher {
-            display: flex; gap: 4px; background: rgba(255,255,255,0.10); border-radius: 30px; padding: 3px; border: 1px solid rgba(255,255,255,0.15);
+            display: flex; gap: 4px; background: rgba(255,255,255,0.08); border-radius: 30px; padding: 3px;
+            border: 1px solid rgba(255,255,255,0.08);
         }
         .plan-switcher .btn-plan {
-            padding: 4px 16px; border: none; border-radius: 30px; font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s;
-            background: transparent; color: rgba(255,255,255,0.6);
+            padding: 4px 14px; border: none; border-radius: 30px; font-weight: 600; font-size: 11px;
+            cursor: pointer; transition: 0.2s; background: transparent; color: rgba(255,255,255,0.5);
         }
-        .plan-switcher .btn-plan.active { background: rgba(255,255,255,0.2); color: white; box-shadow: 0 2px 12px rgba(42,74,138,0.2); }
-        .plan-switcher .btn-plan:hover:not(.active) { color: white; }
-        .plan-label { color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 600; letter-spacing: 0.5px; display: flex; align-items: center; padding-right: 4px; }
-
-        /* ===== 摘要 ===== */
-        .hero-summary {
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 24px;
-            padding: 20px 28px;
-            margin-bottom: 16px;
-            color: white;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 4px 24px rgba(42,74,138,0.12);
+        .plan-switcher .btn-plan.active { background: rgba(255,255,255,0.15); color: white; }
+        @keyframes wiggle { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .pig-bounce { animation: bounce 1.8s ease-in-out infinite; display: inline-block; }
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .countdown-banner {
+            background: linear-gradient(135deg, #4a7ad8, #6c5ecf);
+            border-radius: 16px; padding: 14px 24px; margin-bottom: 20px;
+            color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
         }
-        .hero-summary .main-text { font-size: 18px; font-weight: 500; line-height: 1.6; text-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .hero-summary .main-text .highlight { color: #8bb8ff; font-weight: 700; }
-        .hero-summary .sub-text { font-size: 13px; opacity: 0.85; margin-top: 4px; }
-        .hero-summary .badge-group { display: flex; gap: 12px; flex-wrap: wrap; }
-        .hero-summary .badge {
-            background: rgba(255,255,255,0.12); backdrop-filter: blur(4px); padding: 6px 16px; border-radius: 30px;
-            font-size: 13px; text-align: center; border: 1px solid rgba(255,255,255,0.08);
-        }
-        .hero-summary .badge .num { font-weight: 700; font-size: 18px; display: block; }
-        .hero-summary .badge .label { font-size: 11px; opacity: 0.75; }
-
-        /* ===== 统计卡片 ===== */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px;
+        .countdown-banner .big { font-size: 28px; font-weight: 700; }
+        .countdown-banner .label { font-size: 14px; opacity: 0.8; }
+        .stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px;
         }
         .stat-card {
-            background: rgba(255,255,255,0.78); backdrop-filter: blur(8px); border-radius: 20px; padding: 14px 18px;
-            text-align: center; border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 4px 20px rgba(42,74,138,0.06);
-            border-left: 4px solid #4a7ad8; transition: 0.2s;
+            background: white; border-radius: 16px; padding: 14px 18px; text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04); border-left: 4px solid #4a7ad8; cursor: pointer; transition: 0.2s;
         }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(42,74,138,0.10); }
-        .stat-card .number { font-size: 30px; font-weight: 700; color: #1a1a3e; line-height: 1.2; }
-        .stat-card .number .unit { font-size: 14px; font-weight: 400; color: #6a6a8a; }
-        .stat-card .label { font-size: 12px; color: #6a6a8a; margin-top: 2px; }
-        .stat-card.blue { border-left-color: #4a7ad8; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #1a2a3e; }
+        .stat-card .label { font-size: 12px; color: #7a8a9a; margin-top: 2px; }
+        .stat-card .sub { font-size: 11px; color: #4a7ad8; margin-top: 2px; }
+        .stat-card.green { border-left-color: #4a9e7a; }
+        .stat-card.orange { border-left-color: #e6a23c; }
         .stat-card.purple { border-left-color: #6c5ecf; }
         .stat-card.teal { border-left-color: #3a9a9a; }
-        .stat-card.orange { border-left-color: #e6a23c; }
-        .stat-card.green { border-left-color: #4a9e7a; }
+        .stat-card.pink { border-left-color: #d46896; }
+        .dashboard {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;
+        }
+        .dash-card {
+            background: white; border-radius: 16px; padding: 16px 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .dash-card .dash-title { font-size: 13px; font-weight: 600; color: #4a7ad8; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .progress-bar { height: 10px; background: #e8edf5; border-radius: 20px; overflow: hidden; margin: 6px 0; }
+        .progress-bar .fill { height: 100%; border-radius: 20px; transition: width 0.8s ease; }
+        .progress-bar .fill.blue { background: linear-gradient(90deg, #4a7ad8, #6c5ecf); }
+        .ring-wrapper { display: flex; align-items: center; gap: 20px; }
+        .ring {
+            width: 80px; height: 80px; border-radius: 50%; position: relative;
+            background: conic-gradient(#4a7ad8 var(--pct, 0%), #e8edf5 var(--pct, 0%));
+        }
+        .ring .inner {
+            position: absolute; top: 10px; left: 10px; width: 60px; height: 60px;
+            background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 700; color: #1a2a3e;
+        }
+        .ring-label { font-size: 14px; color: #1a2a3e; }
+        .ring-label .num { font-weight: 700; color: #4a7ad8; }
+        .bar-chart { display: flex; gap: 12px; align-items: flex-end; height: 120px; padding-top: 8px; }
+        .bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .bar-item .bar {
+            width: 100%; max-width: 32px; border-radius: 6px 6px 0 0;
+            background: linear-gradient(180deg, #4a7ad8, #6c5ecf);
+            transition: height 0.6s ease; min-height: 4px;
+        }
+        .bar-item .bar-label { font-size: 10px; color: #7a8a9a; text-align: center; }
+        .pie-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+        .pie-sample { width: 100px; height: 100px; border-radius: 50%; position: relative; }
+        .pie-legend { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+        .pie-legend .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; }
+        .info-card {
+            background: white; border-radius: 16px; padding: 16px 20px; margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .info-card .info-title {
+            font-size: 16px; font-weight: 600; color: #1a2a3e; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .info-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        }
+        .info-row .field {
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .info-row .field label {
+            font-size: 12px; color: #7a8a9a; font-weight: 600;
+        }
+        .info-row .field input, .info-row .field textarea {
+            padding: 8px 12px; border: 1.5px solid #e8edf5; border-radius: 12px;
+            font-size: 13px; font-family: inherit; transition: 0.2s; background: #f8faff;
+        }
+        .info-row .field input:focus, .info-row .field textarea:focus {
+            outline: none; border-color: #4a7ad8; background: white;
+        }
+        .info-row .field .hint { font-size: 11px; color: #8a9aaa; margin-top: 2px; }
+        .gallery-section {
+            background: white; border-radius: 16px; padding: 16px 20px; margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px;
+        }
+        .gallery-grid .img-card {
+            border-radius: 12px; overflow: hidden; background: #e8edf5; border: 2px solid #e8edf5;
+            transition: 0.2s; cursor: pointer; aspect-ratio: 4/3; position: relative;
+        }
+        .gallery-grid .img-card:hover { border-color: #4a7ad8; transform: scale(1.01); }
+        .gallery-grid .img-card img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-grid .img-card .img-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.5));
+            color: white; padding: 6px 10px; font-size: 11px; font-weight: 500;
+        }
+        .day-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 16px;
+        }
+        .day-card {
+            background: white; border-radius: 16px; padding: 14px 16px; text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1.5px solid #e8edf5; cursor: pointer; transition: 0.2s;
+            position: relative;
+        }
+        .day-card:hover { border-color: #4a7ad8; transform: translateY(-3px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .day-card .day-num { font-size: 24px; font-weight: 700; color: #1a2a3e; }
+        .day-card .day-label { font-size: 13px; color: #4a7ad8; margin-top: 2px; }
+        .day-card .day-sub { font-size: 11px; color: #7a8a9a; margin-top: 4px; }
+        .day-card .day-badge {
+            display: inline-block; font-size: 10px; background: #e8edf5; padding: 2px 10px; border-radius: 30px; color: #4a7ad8; margin-top: 6px;
+        }
+        .day-card .pig-icon { font-size: 20px; margin-top: 4px; display: block; }
+        .day-detail-header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+        }
+        .day-detail-header .back-btn {
+            display: flex; align-items: center; gap: 6px; cursor: pointer; color: #4a7ad8; font-weight: 600; font-size: 14px;
+        }
+        .day-detail-header .back-btn:hover { color: #2a5ab8; }
+        .day-detail-header .day-title { font-size: 22px; font-weight: 700; color: #1a2a3e; }
+        .day-detail-header .day-title .pig { font-size: 24px; }
+        .day-info {
+            background: white; border-radius: 16px; padding: 16px 20px; margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .day-info .meal-row { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; padding: 3px 0; }
+        .day-info .meal-row .meal-label { font-weight: 600; color: #4a7ad8; }
+        .day-info .activity { margin-top: 8px; padding-top: 8px; border-top: 1.5px solid #e8edf5; color: #4a7ad8; font-size: 14px; }
+        .day-map-section {
+            background: white; border-radius: 16px; padding: 16px; margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .day-map { height: 320px; border-radius: 12px; overflow: hidden; background: #dde4ef; }
+        .day-map-toolbar { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+        .day-spots-section {
+            background: white; border-radius: 16px; padding: 16px; margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .day-spots-section .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .day-spot-item {
+            display: flex; gap: 12px; padding: 10px 12px; border: 1px solid #e8edf5; border-radius: 12px;
+            margin-bottom: 8px; align-items: center; transition: 0.2s; flex-wrap: wrap;
+        }
+        .day-spot-item:hover { border-color: #c8d4e8; }
+        .day-spot-item .spot-icon { font-size: 20px; flex-shrink: 0; width: 32px; text-align: center; }
+        .day-spot-item .spot-info { flex: 1; min-width: 120px; }
+        .day-spot-item .spot-info .spot-name { font-weight: 600; font-size: 14px; color: #1a2a3e; }
+        .day-spot-item .spot-info .spot-photos { font-size: 12px; color: #4a7ad8; }
+        .day-spot-item .spot-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+        .day-spot-item .photo-thumbs { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+        .day-spot-item .photo-thumbs .thumb {
+            width: 40px; height: 40px; border-radius: 8px; overflow: hidden; background: #e8edf5;
+            border: 1.5px solid #e8edf5; position: relative; cursor: pointer;
+        }
+        .day-spot-item .photo-thumbs .thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .day-spot-item .photo-thumbs .thumb .remove {
+            position: absolute; top: -4px; right: -4px; background: rgba(0,0,0,0.6); color: white;
+            border: none; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .day-spot-item .photo-thumbs .thumb .remove:hover { background: #b35a5a; }
+        .note-section {
+            background: white; border-radius: 16px; padding: 16px; margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .note-section .note-title { font-size: 14px; font-weight: 600; color: #4a7ad8; margin-bottom: 6px; }
+        .note-section textarea {
+            width: 100%; border: 1.5px solid #e8edf5; border-radius: 12px; padding: 10px 14px;
+            font-family: inherit; font-size: 14px; resize: vertical; min-height: 60px; transition: 0.2s;
+        }
+        .note-section textarea:focus { outline: none; border-color: #4a7ad8; }
+        .photo-wall {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 6px; margin-top: 8px;
+        }
+        .photo-wall .wall-item {
+            aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #e8edf5;
+            border: 2px solid #e8edf5; transition: 0.2s; cursor: pointer; position: relative;
+        }
+        .photo-wall .wall-item:hover { border-color: #4a7ad8; transform: scale(1.02); }
+        .photo-wall .wall-item img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-wall .wall-item .badge {
+            position: absolute; bottom: 2px; right: 4px; background: rgba(0,0,0,0.6); color: white;
+            font-size: 9px; padding: 1px 6px; border-radius: 10px;
+        }
+        .empty-state {
+            text-align: center; color: #7a8a9a; padding: 30px 0; font-size: 14px;
+        }
+        .empty-state .pig-big { font-size: 48px; display: block; margin-bottom: 8px; animation: bounce 1.8s ease-in-out infinite; }
+        .footer-pig {
+            text-align: center; color: #8a9aaa; font-size: 12px; margin-top: 12px; padding-bottom: 12px;
+        }
+        .footer-pig .pig { font-size: 16px; display: inline-block; animation: wiggle 2s ease-in-out infinite; }
+        .ai-panel {
+            background: white; border-radius: 16px; padding: 16px 20px; margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .ai-panel .ai-header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
+        }
+        .ai-panel .ai-header .ai-title { font-weight: 600; font-size: 16px; color: #1a2a3e; }
+        .ai-panel .ai-header .ai-status { font-size: 11px; color: #7a8a9a; }
+        .ai-panel .ai-input-row {
+            display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .ai-panel .ai-input-row input {
+            flex: 1; min-width: 150px; padding: 8px 14px; border: 1.5px solid #e8edf5; border-radius: 30px;
+            font-size: 13px; font-family: inherit; background: #f8faff;
+        }
+        .ai-panel .ai-input-row input:focus { outline: none; border-color: #4a7ad8; }
+        .ai-panel .ai-response {
+            margin-top: 10px; padding: 12px 16px; background: #f8faff; border-radius: 12px;
+            font-size: 14px; line-height: 1.7; min-height: 50px; color: #1a2a3e;
+            border: 1.5px solid #e8edf5; display: none;
+        }
+        .ai-panel .ai-response .typing {
+            color: #4a7ad8; display: flex; align-items: center; gap: 6px;
+        }
+        .ai-panel .ai-response .typing::after {
+            content: '...'; animation: dots 1.2s steps(4, end) infinite;
+        }
+        @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 
-        /* ===== 今日行程 ===== */
-        .today-card {
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border-radius: 24px; padding: 18px 24px;
-            margin-bottom: 16px; border: 2px solid rgba(74,122,216,0.25); box-shadow: 0 4px 24px rgba(42,74,138,0.06);
-            position: relative; overflow: hidden;
-        }
-        .today-card::before { content: '✨'; position: absolute; right: 20px; top: 10px; font-size: 28px; opacity: 0.15; }
-        .today-card .today-label { font-size: 12px; color: #4a7ad8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .today-card .today-title { font-size: 20px; font-weight: 700; color: #1a1a3e; margin: 4px 0 8px; }
-        .today-card .today-meals { display: flex; flex-wrap: wrap; gap: 12px 24px; font-size: 14px; color: #1a1a3e; }
-        .today-card .today-meals .meal-item {
-            display: flex; align-items: center; gap: 6px; background: rgba(74,122,216,0.05); padding: 2px 12px 2px 6px; border-radius: 20px;
-        }
-        .today-card .today-meals .meal-tag {
-            font-weight: 600; color: #4a7ad8; background: rgba(74,122,216,0.10); padding: 0 10px; border-radius: 20px; font-size: 11px;
-        }
-        .today-card .today-activity { margin-top: 10px; padding-top: 10px; border-top: 2px dashed rgba(74,122,216,0.15); color: #3a68c0; font-size: 14px; }
-        .today-card .editable-text { cursor: text; padding: 2px 4px; border-radius: 4px; transition: 0.2s; }
-        .today-card .editable-text:hover { background: rgba(74,122,216,0.06); }
-        .today-card .editable-text:focus { outline: 2px solid #4a7ad8; background: white; }
-
-        /* ===== 地图容器 ===== */
-        .map-container {
-            height: 200px; border-radius: 16px; overflow: hidden; margin-top: 10px;
-            border: 2px solid rgba(74,122,216,0.15); background: #eef2f8; position: relative;
-        }
-        .map-container .map-placeholder {
-            display: flex; align-items: center; justify-content: center; height: 100%;
-            color: #6a6a8a; font-size: 13px; flex-direction: column; gap: 4px;
-        }
-        .map-container .map-placeholder .big-icon { font-size: 32px; }
-
-        /* ===== 网格 ===== */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-        .full-width { grid-column: 1 / -1; }
-        .card {
-            background: rgba(255,255,255,0.78); backdrop-filter: blur(8px); border-radius: 20px; padding: 16px 20px;
-            border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 20px rgba(42,74,138,0.04);
-        }
-        .card-title {
-            font-weight: 600; font-size: 15px; color: #1a1a3e; border-bottom: 2px solid rgba(74,122,216,0.12);
-            padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .card-title .tag { font-size: 11px; background: rgba(74,122,216,0.08); color: #4a7ad8; padding: 1px 12px; border-radius: 30px; font-weight: 400; }
-
-        /* ===== 每日行程卡片 ===== */
-        .day-block {
-            padding: 12px 0; border-bottom: 1px solid rgba(74,122,216,0.06); transition: 0.2s; border-radius: 12px; padding: 12px 14px;
-        }
-        .day-block:last-child { border-bottom: none; }
-        .day-block:hover { background: rgba(74,122,216,0.02); }
-        .day-block .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .day-block .day-title { font-weight: 700; color: #1a1a3e; font-size: 16px; }
-        .day-block .day-detail { font-size: 13px; color: #3a3a5a; padding-left: 4px; }
-        .day-block .day-detail .meal-label { font-weight: 600; color: #4a7ad8; display: inline-block; width: 48px; }
-        .day-block .day-detail .editable-text { cursor: text; padding: 2px 4px; border-radius: 4px; transition: 0.2s; }
-        .day-block .day-detail .editable-text:hover { background: rgba(74,122,216,0.05); }
-        .day-block .day-detail .editable-text:focus { outline: 2px solid #4a7ad8; background: white; }
-        .day-block .day-map-container { height: 140px; border-radius: 12px; overflow: hidden; margin-top: 8px; border: 1.5px solid rgba(74,122,216,0.10); background: #eef2f8; position: relative; }
-        .day-block .map-actions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-        .day-block .map-actions .btn-small {
-            padding: 2px 12px; border: none; border-radius: 20px; font-size: 11px; cursor: pointer; background: rgba(74,122,216,0.08); color: #4a7ad8; transition: 0.2s;
-        }
-        .day-block .map-actions .btn-small:hover { background: rgba(74,122,216,0.18); }
-
-        /* ===== 价格 ===== */
-        .price-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .price-item {
-            background: rgba(240,245,255,0.5); backdrop-filter: blur(4px); border-radius: 16px; padding: 10px 12px;
-            text-align: center; border: 1.5px solid rgba(74,122,216,0.12);
-        }
-        .price-item .route { font-weight: 600; color: #1a1a3e; font-size: 13px; }
-        .price-item .price-input {
-            font-size: 20px; font-weight: 700; color: #1a1a3e; width: 80px; text-align: center; border: none;
-            background: rgba(255,255,255,0.6); border-bottom: 2px dashed rgba(74,122,216,0.25); padding: 2px 0; margin: 0 auto; display: block; border-radius: 4px;
-        }
-        .price-item .price-input:focus { outline: none; border-bottom-color: #4a7ad8; background: white; }
-        .price-item .sub { font-size: 11px; color: #6a6a8a; margin-top: 4px; }
-
-        /* ===== 天气 ===== */
-        .weather-row { display: flex; gap: 12px; flex-wrap: wrap; }
-        .weather-item {
-            flex: 1; min-width: 80px; background: rgba(240,245,255,0.4); backdrop-filter: blur(4px); border-radius: 16px;
-            padding: 10px 12px; text-align: center; border: 1.5px solid rgba(74,122,216,0.08);
-        }
-        .weather-item .city { font-weight: 600; color: #1a1a3e; font-size: 13px; }
-        .weather-item .temp { font-size: 22px; font-weight: 300; color: #1a1a3e; }
-        .weather-item .desc { font-size: 12px; color: #6a6a8a; }
-
-        /* ===== 酒店 ===== */
-        .hotel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .hotel-item {
-            background: rgba(240,245,255,0.4); backdrop-filter: blur(4px); border-radius: 16px; padding: 12px 14px;
-            border-left: 4px solid #4a7ad8; border: 1.5px solid rgba(74,122,216,0.10); border-left-width: 4px;
-        }
-        .hotel-item:hover { border-color: rgba(74,122,216,0.2); transform: translateX(2px); }
-        .hotel-item .hotel-name { font-weight: 700; color: #1a1a3e; font-size: 15px; }
-        .hotel-item .hotel-city { font-size: 12px; color: #6a6a8a; }
-        .hotel-item .hotel-desc { font-size: 13px; color: #4a4a6a; margin-top: 4px; }
-        .hotel-item .hotel-price { font-size: 13px; color: #4a7ad8; font-weight: 600; margin-top: 4px; }
-
-        /* ===== 时间线 ===== */
-        .tl-item { display: flex; gap: 12px; padding: 5px 0; border-bottom: 1px solid rgba(74,122,216,0.06); font-size: 13px; border-radius: 8px; padding: 6px 10px; }
-        .tl-item:hover { background: rgba(74,122,216,0.02); }
-        .tl-item .tl-time { font-weight: 600; color: #4a7ad8; min-width: 80px; }
-        .tl-item .tl-desc-editable { flex: 1; cursor: text; padding: 0 4px; border-radius: 4px; color: #1a1a3e; }
-        .tl-item .tl-desc-editable:hover { background: rgba(74,122,216,0.04); }
-        .tl-item .tl-desc-editable:focus { outline: 2px solid #4a7ad8; background: white; }
-
-        /* ===== 花费 ===== */
-        .expense-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(74,122,216,0.06); font-size: 13px; }
-        .expense-item .expense-desc-editable { cursor: text; padding: 0 4px; border-radius: 4px; }
-        .expense-item .expense-desc-editable:hover { background: rgba(74,122,216,0.04); }
-        .expense-item .expense-desc-editable:focus { outline: 2px solid #4a7ad8; background: white; }
-        .expense-item .expense-amount-input { width: 60px; border: none; background: transparent; font-weight: 600; color: #1a1a3e; text-align: center; border-bottom: 2px dashed rgba(74,122,216,0.15); }
-        .expense-item .expense-amount-input:focus { outline: none; border-bottom-color: #4a7ad8; }
-        .expense-item .del { color: #b35a5a; cursor: pointer; margin-left: 8px; opacity: 0.4; transition: 0.2s; }
-        .expense-item .del:hover { opacity: 1; }
-        .add-expense { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-        .add-expense input { padding: 6px 12px; border: 1.5px solid rgba(74,122,216,0.15); border-radius: 30px; font-size: 13px; flex: 1; min-width: 100px; background: rgba(255,255,255,0.8); }
-        .add-expense input:focus { outline: 2px solid #4a7ad8; border-color: transparent; }
-
-        /* ===== 提示 ===== */
-        .tip-banner {
-            background: rgba(74,122,216,0.06); backdrop-filter: blur(4px); border: 1.5px solid rgba(74,122,216,0.10);
-            border-radius: 16px; padding: 12px 18px; margin-top: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-        }
-        .tip-banner .tip-text strong { color: #4a7ad8; }
-
-        /* ===== 响应式 ===== */
         @media (max-width: 768px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            .price-row { grid-template-columns: 1fr; }
-            .hotel-grid { grid-template-columns: 1fr; }
-            .hero-summary { flex-direction: column; align-items: stretch; gap: 12px; }
             .header { flex-direction: column; align-items: stretch; }
-            .header-actions { justify-content: flex-start; flex-wrap: wrap; }
-            .stats-grid { grid-template-columns: repeat(3, 1fr); }
-            .day-block .day-map-container { height: 110px; }
-            .map-container { height: 150px; }
+            .header-actions { justify-content: flex-start; }
+            .dashboard { grid-template-columns: 1fr; }
+            .day-cards { grid-template-columns: repeat(3, 1fr); }
+            .day-map { height: 240px; }
+            .ring-wrapper { flex-direction: column; align-items: flex-start; }
+            .bar-chart { height: 80px; }
+            .info-row { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .stat-card .number { font-size: 24px; }
-            body { padding: 10px; }
-            .today-card .today-meals { flex-direction: column; gap: 4px; }
-            .header h1 { font-size: 18px; }
-            .day-block .day-map-container { height: 90px; }
-            .map-container { height: 120px; }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .day-cards { grid-template-columns: 1fr 1fr; }
+            .day-map { height: 200px; }
+            .countdown-banner .big { font-size: 22px; }
+            .photo-wall { grid-template-columns: repeat(3, 1fr); }
+            .gallery-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <!-- ===== 顶部 ===== -->
-        <div class="header">
-            <h1>🌊 大连·烟台 <small>6天5晚 · 浪漫旅行</small></h1>
-            <div class="header-actions">
-                <div class="plan-switcher">
-                    <span class="plan-label">🗺️ 路线</span>
-                    <button class="btn-plan active" data-plan="dl-yt" onclick="switchPlan('dl-yt')">大连→烟台</button>
-                    <button class="btn-plan" data-plan="yt-dl" onclick="switchPlan('yt-dl')">烟台→大连</button>
-                </div>
-                <button class="btn btn-outline-white" onclick="refreshWeather()">🌤️ 天气</button>
-                <button class="btn btn-white" onclick="exportData()">📥 导出</button>
-                <button class="btn btn-outline-white" onclick="resetAll()">↺ 重置</button>
+    <!-- ===== 顶部 ===== -->
+    <div class="header">
+        <h1><span class="pig">🐷</span> 大连·烟台 <small>旅行足迹</small></h1>
+        <div class="header-actions">
+            <div class="plan-switcher">
+                <span style="color:rgba(255,255,255,0.4);font-size:10px;display:flex;align-items:center;padding-right:4px;">路线</span>
+                <button class="btn-plan active" data-plan="dl-yt" onclick="switchPlan('dl-yt')">大连→烟台</button>
+                <button class="btn-plan" data-plan="yt-dl" onclick="switchPlan('yt-dl')">烟台→大连</button>
             </div>
-        </div>
-
-        <!-- ===== 摘要 ===== -->
-        <div class="hero-summary" id="heroSummary">
-            <div>
-                <div class="main-text">
-                    ✨ 距出发还有 <span class="highlight" id="heroDays">0</span> 天 ·
-                    总预算 <span class="highlight" id="heroBudget">5800</span> 元 ·
-                    剩余 <span class="highlight" id="heroRemain">5800</span> 元
-                </div>
-                <div class="sub-text" id="heroWeather">🌤️ 大连 18°C 晴 · 烟台 20°C 多云</div>
-            </div>
-            <div class="badge-group">
-                <div class="badge"><span class="num" id="badgeDays">6</span><span class="label">总天数</span></div>
-                <div class="badge"><span class="num" id="badgeSpent">0</span><span class="label">已花费</span></div>
-                <div class="badge"><span class="num" id="badgeRemainPct">100</span><span class="label">剩余%</span></div>
-            </div>
-        </div>
-
-        <!-- ===== 统计卡片 ===== -->
-        <div class="stats-grid">
-            <div class="stat-card blue"><div class="number" id="statDays">6</div><div class="label">📆 行程总天数</div></div>
-            <div class="stat-card purple"><div class="number" id="statBudget">5800</div><div class="label">💰 总预算 (元)</div></div>
-            <div class="stat-card orange"><div class="number" id="statSpent">0</div><div class="label">💸 已花费 (元)</div></div>
-            <div class="stat-card green"><div class="number" id="statRemain">5800</div><div class="label">✅ 剩余预算 (元)</div></div>
-            <div class="stat-card teal"><div class="number" id="statTransport">2452</div><div class="label">🚄 交通小计 (两人)</div></div>
-            <div class="stat-card blue"><div class="number" id="statWeather">--°C</div><div class="label">🌤️ 大连当前天气</div></div>
-        </div>
-
-        <!-- ===== 今日行程 ===== -->
-        <div class="today-card" id="todayCard">
-            <div class="today-label">✨ 今日行程 · 自动定位当天</div>
-            <div class="today-title"><span id="todayTitle">Day 1 · 北京 → 大连</span></div>
-            <div class="today-meals" id="todayMeals">
-                <span class="meal-item"><span class="meal-tag">早餐</span> <span class="editable-text" contenteditable="true">出发前解决</span></span>
-                <span class="meal-item"><span class="meal-tag">午餐</span> <span class="editable-text" contenteditable="true">海味当家 (海鲜蒸锅)</span></span>
-                <span class="meal-item"><span class="meal-tag">晚餐</span> <span class="editable-text" contenteditable="true">黑石礁夜市 · 烧烤焖子</span></span>
-            </div>
-            <div class="today-activity">🏃 <span class="editable-text" contenteditable="true" id="todayActivity">高铁 → 入住 → 星海广场夜景</span></div>
-            <div class="map-container" id="todayMapContainer">
-                <div class="map-placeholder" id="todayMapPlaceholder">
-                    <div class="big-icon">🗺️</div>
-                    <span>✨ 今日路线地图加载中...</span>
-                </div>
-            </div>
-            <div class="tip-banner">
-                <span class="tip-icon">⏰</span>
-                <span class="tip-text" id="tipText">💡 <strong>错峰建议：</strong>10月2日出发，10月6日上午返程。热门景点建议上午8-10点或下午3点后前往。</span>
-            </div>
-        </div>
-
-        <!-- ===== 网格 ===== -->
-        <div class="grid-2">
-
-            <!-- 交通 -->
-            <div class="card">
-                <div class="card-title">🚄 交通费用 <span class="tag">点击数字可修改</span></div>
-                <div class="price-row">
-                    <div class="price-item"><div class="route">北京→大连</div><input class="price-input" id="pBJDl" type="number" value="481" step="10" onchange="updateTransportTotal()"><div class="sub">高铁 · 二等座</div></div>
-                    <div class="price-item"><div class="route">大连→烟台</div><input class="price-input" id="pDlYt" type="number" value="280" step="10" onchange="updateTransportTotal()"><div class="sub">轮渡 · 三等舱</div></div>
-                    <div class="price-item"><div class="route">烟台→北京</div><input class="price-input" id="pYtBj" type="number" value="465" step="10" onchange="updateTransportTotal()"><div class="sub">高铁 · 二等座</div></div>
-                </div>
-                <div style="text-align:right; font-size:12px; color:#6a6a8a; margin-top:6px;">✨ 两人往返合计：<strong id="transportTotal">2452</strong> 元</div>
-            </div>
-
-            <!-- 天气 -->
-            <div class="card">
-                <div class="card-title">🌤️ 实时天气 <span class="tag" id="weatherStatus">已更新</span></div>
-                <div class="weather-row" id="weatherRow">
-                    <div class="weather-item"><div class="city">📍 大连</div><div class="temp" id="dlTemp">18°C</div><div class="desc" id="dlDesc">晴</div></div>
-                    <div class="weather-item"><div class="city">📍 烟台</div><div class="temp" id="ytTemp">20°C</div><div class="desc" id="ytDesc">多云</div></div>
-                    <div class="weather-item" style="background:rgba(74,122,216,0.06);"><div class="city">⛴️ 海上</div><div class="temp" id="seaTemp">16°C</div><div class="desc" id="seaDesc">海况平稳</div></div>
-                </div>
-            </div>
-
-            <!-- 酒店 -->
-            <div class="card full-width">
-                <div class="card-title">🏨 酒店推荐 <span class="tag">点击文字可修改</span></div>
-                <div class="hotel-grid">
-                    <div class="hotel-item"><div class="hotel-name"><span class="editable-text" contenteditable="true">🏙️ 大连君悦酒店</span></div><div class="hotel-city"><span class="editable-text" contenteditable="true">📍 星海广场 · 海景房</span></div><div class="hotel-desc"><span class="editable-text" contenteditable="true">步行可达星海广场，房间直面跨海大桥</span></div><div class="hotel-price"><span class="editable-text" contenteditable="true">💰 约 800-1200元/晚</span></div></div>
-                    <div class="hotel-item"><div class="hotel-name"><span class="editable-text" contenteditable="true">🏙️ 大连雅乐轩酒店</span></div><div class="hotel-city"><span class="editable-text" contenteditable="true">📍 中山广场 · 市中心</span></div><div class="hotel-desc"><span class="editable-text" contenteditable="true">交通便利，周边美食众多，性价比高</span></div><div class="hotel-price"><span class="editable-text" contenteditable="true">💰 约 400-600元/晚</span></div></div>
-                    <div class="hotel-item"><div class="hotel-name"><span class="editable-text" contenteditable="true">🏖️ 烟台金海岸希尔顿</span></div><div class="hotel-city"><span class="editable-text" contenteditable="true">📍 滨海路 · 海景</span></div><div class="hotel-desc"><span class="editable-text" contenteditable="true">近烟台山和月亮湾，度假感强</span></div><div class="hotel-price"><span class="editable-text" contenteditable="true">💰 约 600-900元/晚</span></div></div>
-                    <div class="hotel-item"><div class="hotel-name"><span class="editable-text" contenteditable="true">🏖️ 烟台亚朵酒店</span></div><div class="hotel-city"><span class="editable-text" contenteditable="true">📍 烟台站附近 · 市中心</span></div><div class="hotel-desc"><span class="editable-text" contenteditable="true">方便赶高铁，周边餐饮丰富</span></div><div class="hotel-price"><span class="editable-text" contenteditable="true">💰 约 350-500元/晚</span></div></div>
-                </div>
-            </div>
-
-            <!-- 每日行程（含路线地图） -->
-            <div class="card full-width">
-                <div class="card-title">🗺️ 完整行程路线 <span class="tag" id="planTag">大连→烟台</span></div>
-                <div id="itineraryContainer"></div>
-            </div>
-
-            <!-- 时间线 -->
-            <div class="card full-width">
-                <div class="card-title">⏳ 行程时间线 <span class="tag">点击文字修改</span></div>
-                <div id="timelineContainer"></div>
-            </div>
-
-            <!-- 花费 -->
-            <div class="card full-width">
-                <div class="card-title">📝 花费记录 <span style="font-weight:400; font-size:12px; color:#6a6a8a;">实时累计</span></div>
-                <div id="expenseList"></div>
-                <div class="add-expense">
-                    <input type="text" id="expenseDesc" placeholder="项目名称 (如: 浪漫晚餐)">
-                    <input type="number" id="expenseAmount" placeholder="金额" style="max-width:120px;">
-                    <button class="btn btn-primary" onclick="addExpense()">➕ 添加</button>
-                    <span style="margin-left:auto; font-weight:600; font-size:14px; color:#1a1a3e;">累计：<span id="expenseTotal">0</span> 元</span>
-                </div>
-            </div>
-
-        </div>
-
-        <div style="text-align:center; color:rgba(255,255,255,0.7); font-size:12px; margin-top:12px; text-shadow:0 2px 8px rgba(0,0,0,0.1);">
-            ✨ 点击任何文字修改 · 每条路线都有轨迹地图 · 可自由标点
+            <button class="btn btn-outline" onclick="refreshWeather()">🌤️ 天气</button>
+            <button class="btn btn-white" onclick="exportData()">📥 导出</button>
         </div>
     </div>
 
-    <script>
-        // ============================================================
-        //  行程方案（浪漫文案优化）
-        // ============================================================
-        const PLANS = {
-            'dl-yt': {
-                name: '大连→烟台',
-                itinerary: [
-                    { day: 'Day 1 · 初见大连 ✨', meals: ['☕ 高铁早餐/自带', '🍽️ 海味当家·海鲜蒸锅', '🌙 黑石礁夜市·烧烤焖子'], activity: '🚄 北京→大连高铁 → 入住海景酒店 → 星海广场散步看跨海大桥' },
-                    { day: 'Day 2 · 海岸漫步 💙', meals: ['🥛 酒店早餐/豆腐脑油条', '🦐 渔人码头·日丰园', '🥟 中原小吃街·海胆水饺'], activity: '🏞️ 滨海路徒步 → 燕窝岭 → 渔人码头拍照 → 威尼斯水城划船' },
-                    { day: 'Day 3 · 山海之约 🌊', meals: ['🥐 酒店早餐', '🍣 金石滩/旅顺海鲜', '🍱 市区日料/海鲜'], activity: '🌋 金石滩地质公园看奇石 或 🏯 旅顺参观军港和博物馆' },
-                    { day: 'Day 4 · 海上漂流 ⛴️', meals: ['🥐 酒店早餐', '🍜 市区简餐', '🍷 船上餐厅·甲板烧烤'], activity: '🚢 中山广场看欧式建筑 → 坐复古有轨电车 → 夜航轮渡去烟台' },
-                    { day: 'Day 5 · 烟台之恋 🌅', meals: ['🍜 蓬莱小面', '🦀 鲁凤炒鸡/胶东菜', '🦞 旺角小渔村'], activity: '🌅 轮渡上等海上日出 → 烟台山漫步看领事馆 → 月亮湾走走 → 所城里老街' },
-                    { day: 'Day 6 · 浪漫返程 💫', meals: ['🥐 酒店早餐', '🍜 烟台简餐', '🍱 高铁上/到家'], activity: '🚄 张裕酒文化博物馆品酒 → 烟台→北京高铁回家' }
-                ],
-                timeline: [
-                    { time: 'Day 1 下午', desc: '🚄 北京→大连，星海广场看夜景' },
-                    { time: 'Day 2 全天', desc: '🏞️ 滨海路·渔人码头·威尼斯水城' },
-                    { time: 'Day 3 全天', desc: '🌋 金石滩地质公园 或 🏯 旅顺' },
-                    { time: 'Day 4 晚间', desc: '🚢 夜航轮渡 大连→烟台 (住船上看星星)' },
-                    { time: 'Day 5 上午', desc: '🌅 烟台山·月亮湾·所城里' },
-                    { time: 'Day 6 下午', desc: '🚄 烟台→北京，带着回忆回家' }
-                ],
-                tip: '💡 <strong>浪漫贴士：</strong>10月2日出发避开高峰。大连滨海路建议傍晚散步看日落，轮渡上可以一起看星星和海上日出。'
-            },
-            'yt-dl': {
-                name: '烟台→大连',
-                itinerary: [
-                    { day: 'Day 1 · 初见烟台 🌊', meals: ['☕ 高铁早餐/自带', '🍲 烟台海鲜/鲁菜', '🌙 烟台山周边·海鲜大咖'], activity: '🚄 北京→烟台高铁 → 入住海景酒店 → 烟台山看夜景' },
-                    { day: 'Day 2 · 海岸漫步 💙', meals: ['🍜 蓬莱小面', '🦀 鲁凤炒鸡/胶东菜', '🦞 旺角小渔村'], activity: '🌅 烟台山看日出 → 月亮湾 → 滨海广场 → 所城里老街' },
-                    { day: 'Day 3 · 海岛之约 🏝️', meals: ['🥐 酒店早餐', '🍣 烟台特色简餐', '🍱 市区海鲜/鲁菜'], activity: '🏖️ 养马岛环岛骑行 或 🍷 张裕博物馆品酒 → 市区漫步' },
-                    { day: 'Day 4 · 海上漂流 ⛴️', meals: ['🥐 酒店早餐', '🍜 市区简餐', '🍷 船上餐厅·甲板烧烤'], activity: '🚢 烟台港登船 → 夜航轮渡去大连 → 甲板看星星' },
-                    { day: 'Day 5 · 大连之恋 🌅', meals: ['🍜 抵达后早餐', '🦐 渔人码头·日丰园', '🥟 中原小吃街·海胆水饺'], activity: '🌊 星海广场看海 → 滨海路漫步 → 渔人码头拍照' },
-                    { day: 'Day 6 · 浪漫返程 💫', meals: ['🥐 酒店早餐', '🍜 大连简餐', '🍱 高铁上/到家'], activity: '🚄 中山广场看欧式建筑 → 坐复古电车 → 大连→北京高铁' }
-                ],
-                timeline: [
-                    { time: 'Day 1 下午', desc: '🚄 北京→烟台，烟台山看夜景' },
-                    { time: 'Day 2 全天', desc: '🌅 烟台山·月亮湾·所城里' },
-                    { time: 'Day 3 全天', desc: '🏖️ 养马岛骑行 或 🍷 张裕博物馆' },
-                    { time: 'Day 4 晚间', desc: '🚢 夜航轮渡 烟台→大连 (住船上看星星)' },
-                    { time: 'Day 5 上午', desc: '🌊 星海广场·滨海路·渔人码头' },
-                    { time: 'Day 6 下午', desc: '🚄 大连→北京，带着回忆回家' }
-                ],
-                tip: '💡 <strong>浪漫贴士：</strong>10月2日出发避开高峰。烟台养马岛适合骑行约会，轮渡上可以一起等海上日出。'
-            }
-        };
+    <!-- ===== 倒计时 ===== -->
+    <div class="countdown-banner">
+        <div>
+            <span class="pig-icon">🐷</span>
+            <span class="label">距出发还有</span>
+            <span class="big" id="countdownDays">0</span>
+            <span class="label">天</span>
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:14px;">
+            <span>📅 2026.10.01 - 2026.10.06</span>
+            <span>📍 <span id="planDisplay">大连→烟台</span></span>
+            <span>🐷 和小猪一起旅行</span>
+        </div>
+    </div>
 
-        // ============================================================
-        //  坐标数据
-        // ============================================================
-        const COORDS = {
-            '北京': [116.40, 39.90],
-            '大连': [121.61, 38.91],
-            '烟台': [121.39, 37.54],
-            '星海广场': [121.59, 38.88],
-            '渔人码头': [121.69, 38.86],
-            '金石滩': [122.01, 39.08],
-            '旅顺': [121.26, 38.80],
-            '中山广场': [121.64, 38.92],
-            '烟台山': [121.40, 37.55],
-            '月亮湾': [121.44, 37.52],
-            '养马岛': [121.62, 37.47],
-            '张裕博物馆': [121.42, 37.54],
-            '滨海路': [121.64, 38.85],
-            '威尼斯水城': [121.72, 38.89],
-            '所城里': [121.42, 37.53],
-            '大连港': [121.66, 38.92],
-            '烟台港': [121.39, 37.55]
-        };
+    <!-- ============================================================ -->
+    <!-- 首页 -->
+    <!-- ============================================================ -->
+    <div class="page active" id="page-home">
 
-        function getCoordForDay(day) {
-            const text = day.day + day.activity + day.meals.join('');
-            for (let [key, coord] of Object.entries(COORDS)) {
-                if (text.includes(key)) return coord;
-            }
-            // 默认返回大连
-            return COORDS['大连'];
-        }
+        <!-- 统计卡片 -->
+        <div class="stats">
+            <div class="stat-card"><div class="num">6</div><div class="label">📆 行程天数</div><div class="sub">🐷 每天都是惊喜</div></div>
+            <div class="stat-card green"><div class="num" id="hSpots">0</div><div class="label">📍 标记地点</div><div class="sub" id="hSpotsSub">🐷 已打卡 0 个</div></div>
+            <div class="stat-card purple"><div class="num" id="hPhotos">0</div><div class="label">📷 上传照片</div><div class="sub">🐷 记录美好瞬间</div></div>
+            <div class="stat-card orange"><div class="num" id="hBudget">--</div><div class="label">💰 交通+酒店</div><div class="sub">🐷 待填写</div></div>
+            <div class="stat-card teal"><div class="num" id="hProgress">0%</div><div class="label">📊 行程进度</div><div class="sub" id="hProgressSub">🐷 Day 0 / 6</div></div>
+            <div class="stat-card pink"><div class="num" id="hCheckins">0</div><div class="label">✅ 打卡完成</div><div class="sub">🐷 / <span id="hCheckinsTotal">0</span> 个地点</div></div>
+        </div>
 
-        // ============================================================
-        //  状态
-        // ============================================================
-        let currentPlan = 'dl-yt';
-        const MEAL_LABELS = ['早餐', '午餐', '晚餐'];
-        let mapInstances = {};
-        let routeMarkers = {};
+        <!-- ===== 交通 & 酒店 ===== -->
+        <div class="info-card">
+            <div class="info-title"><span class="pig">🐷</span> 交通 & 酒店 信息 <span style="font-size:12px;color:#7a8a9a;font-weight:400;">（自己填，小猪帮你记）</span></div>
+            <div class="info-row">
+                <div class="field"><label>🚄 北京 → 大连 高铁</label><input type="text" id="train1" placeholder="如：G3622次 · 481元/人 · 4.5h"></div>
+                <div class="field"><label>🚢 大连 → 烟台 轮渡</label><input type="text" id="ferry" placeholder="如：渤海轮渡 · 三等舱 280元/人 · 7h"></div>
+                <div class="field"><label>🚄 烟台 → 北京 高铁</label><input type="text" id="train2" placeholder="如：G1088次 · 432元/人 · 5.5h"></div>
+                <div class="field"><label>🏨 酒店信息</label><textarea id="hotelInfo" placeholder="如：大连：君悦酒店 800-1200元/晚&#10;烟台：亚朵酒店 350-500元/晚" rows="3"></textarea></div>
+                <div class="field" style="grid-column:1/-1;"><label>📝 其他备注</label><input type="text" id="otherNote" placeholder="如：轮渡夜航可省一晚住宿 / 提前订票..."></div>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;">
+                <button class="btn-sm primary" onclick="saveTravelInfo()">💾 保存信息</button>
+                <button class="btn-sm pig" onclick="loadTravelInfo()">📂 读取已存</button>
+            </div>
+        </div>
 
-        let expenseData = [
-            { desc: '高铁票 (北京→大连)', amount: 600 },
-            { desc: '大连住宿 (3晚)', amount: 1200 },
-            { desc: '轮渡船票', amount: 400 },
-            { desc: '烟台住宿 (1晚)', amount: 400 },
-            { desc: '高铁票 (烟台→北京)', amount: 600 }
-        ];
+        <!-- ===== 图片展示 ===== -->
+        <div class="gallery-section">
+            <div class="gallery-title"><span class="pig">🐷</span> 旅行灵感 · 大连 & 烟台</div>
+            <div class="gallery-grid" id="inspireGallery"></div>
+        </div>
 
-        // ============================================================
-        //  地图工具 - 创建路线轨迹
-        // ============================================================
-        function createRouteMap(containerId, points, label = '✨ 今日路线') {
-            if (typeof AMap === 'undefined') {
-                const el = document.getElementById(containerId);
-                if (el) {
-                    el.innerHTML = `<div class="map-placeholder"><div class="big-icon">🗺️</div><span>地图API加载中...</span></div>`;
-                }
-                return null;
-            }
+        <!-- ===== AI 旅行助手 ===== -->
+        <div class="ai-panel">
+            <div class="ai-header">
+                <span class="ai-title">🤖 AI 旅行助手 <span style="font-size:12px;color:#7a8a9a;font-weight:400;">🐷 问小猪任何旅行问题</span></span>
+                <span class="ai-status" id="aiStatus">✅ 已就绪</span>
+            </div>
+            <div class="ai-input-row">
+                <input type="text" id="aiInput" placeholder="问小猪：大连有什么好吃的？烟台天气怎么样？..." onkeydown="if(event.key==='Enter') askAI()">
+                <button class="btn-sm primary" onclick="askAI()" id="aiBtn">🐷 问小猪</button>
+                <button class="btn-sm pig" onclick="clearAI()">🗑️ 清空</button>
+            </div>
+            <div class="ai-response" id="aiResponse"></div>
+        </div>
 
-            const container = document.getElementById(containerId);
-            if (!container) return null;
-
-            // 清理旧地图
-            if (mapInstances[containerId]) {
-                try { mapInstances[containerId].destroy(); } catch (e) {}
-                delete mapInstances[containerId];
-            }
-
-            container.innerHTML = '';
-
-            // 如果只有一个点，用单点地图
-            if (points.length <= 1) {
-                const center = points.length === 1 ? points[0] : COORDS['大连'];
-                try {
-                    const map = new AMap.Map(container, {
-                        zoom: 12,
-                        center: center,
-                        mapStyle: 'amap://styles/fresh',
-                        viewMode: '2D',
-                        resizeEnable: true,
-                        zoomEnable: true,
-                        dragEnable: true
-                    });
-                    const marker = new AMap.Marker({
-                        position: center,
-                        title: label,
-                        label: { content: `<div style="background:#4a7ad8;color:white;padding:2px 12px;border-radius:20px;font-size:12px;font-weight:600;">${label}</div>`, direction: 'top' }
-                    });
-                    marker.setMap(map);
-                    mapInstances[containerId] = map;
-                    setTimeout(() => { try { map.setFitView(); } catch (e) {} }, 300);
-                    return map;
-                } catch (e) {
-                    container.innerHTML = `<div class="map-placeholder"><div class="big-icon">🗺️</div><span>地图加载失败</span></div>`;
-                    return null;
-                }
-            }
-
-            // 多个点：绘制路线轨迹
-            try {
-                const map = new AMap.Map(container, {
-                    zoom: 10,
-                    center: points[0],
-                    mapStyle: 'amap://styles/fresh',
-                    viewMode: '2D',
-                    resizeEnable: true,
-                    zoomEnable: true,
-                    dragEnable: true
-                });
-
-                // 绘制轨迹线
-                const polyline = new AMap.Polyline({
-                    path: points,
-                    strokeColor: '#4a7ad8',
-                    strokeWeight: 4,
-                    strokeStyle: 'solid',
-                    lineJoin: 'round',
-                    lineCap: 'round',
-                    strokeOpacity: 0.8
-                });
-                polyline.setMap(map);
-
-                // 添加起终点标记
-                const startMarker = new AMap.Marker({
-                    position: points[0],
-                    title: '起点',
-                    label: { content: '📍 起点', direction: 'top' }
-                });
-                startMarker.setMap(map);
-
-                const endMarker = new AMap.Marker({
-                    position: points[points.length - 1],
-                    title: '终点',
-                    label: { content: '🏁 终点', direction: 'top' }
-                });
-                endMarker.setMap(map);
-
-                // 添加中间点标记（带序号）
-                points.forEach((p, idx) => {
-                    if (idx > 0 && idx < points.length - 1) {
-                        const m = new AMap.Marker({
-                            position: p,
-                            title: `第${idx+1}站`,
-                            label: { content: `📍 ${idx+1}`, direction: 'top' }
-                        });
-                        m.setMap(map);
-                    }
-                });
-
-                mapInstances[containerId] = map;
-                setTimeout(() => { try { map.setFitView(); } catch (e) {} }, 300);
-                return map;
-            } catch (e) {
-                container.innerHTML = `<div class="map-placeholder"><div class="big-icon">🗺️</div><span>地图加载失败</span></div>`;
-                return null;
-            }
-        }
-
-        // ============================================================
-        //  初始化每日地图
-        // ============================================================
-        function initDailyMap(containerId, day) {
-            const coords = getCoordForDay(day);
-            // 尝试从行程中提取多个地点
-            const text = day.day + day.activity + day.meals.join('');
-            const foundPoints = [];
-            for (let [key, coord] of Object.entries(COORDS)) {
-                if (text.includes(key)) {
-                    foundPoints.push(coord);
-                }
-            }
-            // 去重
-            const uniquePoints = [];
-            const seen = new Set();
-            for (let p of foundPoints) {
-                const key = p.join(',');
-                if (!seen.has(key)) {
-                    seen.add(key);
-                    uniquePoints.push(p);
-                }
-            }
-            const points = uniquePoints.length > 0 ? uniquePoints : [coords];
-            createRouteMap(containerId, points, '✨ ' + day.day.replace('💕', '').trim());
-        }
-
-        // ============================================================
-        //  方案切换
-        // ============================================================
-        function switchPlan(planKey) {
-            currentPlan = planKey;
-            document.querySelectorAll('.btn-plan').forEach(b => b.classList.toggle('active', b.dataset.plan === planKey));
-            document.getElementById('planTag').textContent = PLANS[planKey].name;
-            renderItinerary(planKey);
-            renderTimeline(planKey);
-            renderToday(planKey);
-            document.getElementById('tipText').innerHTML = PLANS[planKey].tip;
-            savePlanToStorage(planKey);
-        }
-
-        // ============================================================
-        //  今日行程
-        // ============================================================
-        function getTodayIndex(planKey) {
-            const start = new Date(2026, 9, 1);
-            const now = new Date();
-            const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-            return Math.max(0, Math.min(diff, 5));
-        }
-
-        function renderToday(planKey) {
-            const plan = PLANS[planKey];
-            const idx = getTodayIndex(planKey);
-            const day = plan.itinerary[idx];
-            document.getElementById('todayTitle').textContent = day.day;
-            document.getElementById('todayActivity').textContent = day.activity;
-            const items = document.querySelectorAll('#todayMeals .meal-item .editable-text');
-            day.meals.forEach((m, i) => { if (items[i]) items[i].textContent = m; });
-            setTimeout(() => { initDailyMap('todayMapContainer', day); }, 400);
-        }
-
-        // ============================================================
-        //  渲染行程
-        // ============================================================
-        function renderItinerary(planKey) {
-            const plan = PLANS[planKey];
-            const container = document.getElementById('itineraryContainer');
-            let html = '';
-            plan.itinerary.forEach((day, idx) => {
-                const isToday = idx === getTodayIndex(planKey);
-                const mapId = 'daymap_' + idx;
-                html += `
-                    <div class="day-block" style="${isToday ? 'background:rgba(74,122,216,0.04);border-radius:12px;' : ''}">
-                        <div class="day-header">
-                            <div class="day-title">${day.day} ${isToday ? '✨ 今天' : ''}</div>
-                            <span style="font-size:11px;color:#6a6a8a;">🗺️ 拖动地图查看路线</span>
-                        </div>
-                        <div class="day-detail">
-                            ${day.meals.map((m, i) => `<div><span class="meal-label">${MEAL_LABELS[i]}</span> <span class="editable-text" contenteditable="true">${m}</span></div>`).join('')}
-                            <div style="margin-top:4px;color:#4a7ad8;">🏃 <span class="editable-text" contenteditable="true">${day.activity}</span></div>
-                        </div>
-                        <div class="day-map-container" id="${mapId}">
-                            <div class="map-placeholder"><div class="big-icon">🗺️</div><span>✨ 路线加载中...</span></div>
-                        </div>
-                        <div class="map-actions">
-                            <button class="btn-small" onclick="refreshDayMap('${mapId}', ${idx})">🔄 刷新地图</button>
-                            <button class="btn-small" onclick="addMarkerToDay('${mapId}', ${idx})">📍 添加标记</button>
-                            <button class="btn-small" onclick="clearMarkers('${mapId}')">🗑️ 清除标记</button>
-                        </div>
+        <!-- 可视化仪表盘 -->
+        <div class="dashboard">
+            <div class="dash-card">
+                <div class="dash-title">💰 预算使用 <span style="font-size:12px;color:#7a8a9a;font-weight:400;">🐷 环形图</span></div>
+                <div class="ring-wrapper">
+                    <div class="ring" id="budgetRing" style="--pct:0%;"><div class="inner" id="budgetRingLabel">0%</div></div>
+                    <div class="ring-label">
+                        <div>总预算 <span class="num" id="rTotalBudget">--</span> 元</div>
+                        <div>已花费 <span class="num" id="rSpent">--</span> 元</div>
+                        <div>剩余 <span class="num" id="rRemain">--</span> 元</div>
+                        <div style="font-size:12px;color:#7a8a9a;">🐷 填完交通酒店自动算</div>
                     </div>
-                `;
-            });
-            container.innerHTML = html;
+                </div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-title">📊 每日地点数 <span style="font-size:12px;color:#7a8a9a;font-weight:400;">🐷 柱状图</span></div>
+                <div class="bar-chart" id="barChart"></div>
+                <div style="font-size:11px;color:#7a8a9a;margin-top:6px;text-align:right;">📍 共 <span id="barTotal">0</span> 个地点 🐷</div>
+            </div>
+        </div>
 
-            // 初始化每个地图
-            setTimeout(() => {
-                plan.itinerary.forEach((day, idx) => {
-                    setTimeout(() => {
-                        const mapId = 'daymap_' + idx;
-                        const el = document.getElementById(mapId);
-                        if (el) {
-                            initDailyMap(mapId, day);
-                        }
-                    }, idx * 300);
-                });
-            }, 400);
+        <div class="dashboard">
+            <div class="dash-card">
+                <div class="dash-title">📍 地点分布 <span style="font-size:12px;color:#7a8a9a;font-weight:400;">🐷 大连 vs 烟台</span></div>
+                <div class="pie-row">
+                    <div class="pie-sample" id="pieChart" style="background:conic-gradient(#4a7ad8 50%,#6c5ecf 50%);"></div>
+                    <div class="pie-legend">
+                        <div><span class="dot" style="background:#4a7ad8;"></span> 大连 <span id="pieDl">0</span> 个</div>
+                        <div><span class="dot" style="background:#6c5ecf;"></span> 烟台 <span id="pieYt">0</span> 个</div>
+                        <div style="font-size:12px;color:#7a8a9a;margin-top:4px;">🐷 共 <span id="pieTotal">0</span> 个地点</div>
+                    </div>
+                </div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-title">✅ 打卡进度 <span style="font-size:12px;color:#7a8a9a;font-weight:400;">🐷 完成率</span></div>
+                <div style="margin-top:8px;">
+                    <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:2px;">
+                        <span>已打卡 <span id="checkinDone">0</span> / <span id="checkinTotal">0</span></span>
+                        <span id="checkinPct">0%</span>
+                    </div>
+                    <div class="progress-bar"><div class="fill blue" id="checkinBar" style="width:0%;"></div></div>
+                </div>
+                <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">
+                    <button class="btn-sm success" onclick="checkinAll()">✅ 全部打卡</button>
+                    <button class="btn-sm" onclick="resetCheckins()">↺ 重置打卡</button>
+                    <button class="btn-sm pig" onclick="playPigSound()">🐷 小猪加油</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 照片墙 -->
+        <div style="background:white;border-radius:16px;padding:16px 20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.04);">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                <span style="font-weight:600;font-size:16px;color:#1a2a3e;">📸 照片墙 🐷</span>
+                <span style="font-size:13px;color:#7a8a9a;" id="wallCount">0 张照片</span>
+            </div>
+            <div class="photo-wall" id="photoWall">
+                <div class="empty-state"><span class="pig-big">🐷</span>还没有照片呢～<br>添加地点后上传照片吧！</div>
+            </div>
+        </div>
+
+        <!-- 每日卡片 -->
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:8px;">
+            <span style="font-weight:600;font-size:16px;color:#1a2a3e;">📍 每天详情</span>
+            <span style="font-size:13px;color:#7a8a9a;">🐷 点击进入 · 查看路线和照片</span>
+        </div>
+        <div class="day-cards" id="dayCards"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 每日详情页 -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-day">
+        <div class="day-detail-header">
+            <span class="back-btn" onclick="goHome()">← 返回总览</span>
+            <span class="day-title" id="dTitle"><span class="pig">🐷</span> Day 1</span>
+            <span></span>
+        </div>
+        <div class="day-info" id="dInfo"></div>
+        <div class="day-map-section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <h3 style="font-size:16px;color:#1a2a3e;">🗺️ 路线轨迹 <span class="pig">🐷</span></h3>
+                <span style="font-size:12px;color:#7a8a9a;">📍 地点按顺序连接</span>
+            </div>
+            <div class="day-map" id="dMap"></div>
+            <div class="day-map-toolbar">
+                <button class="btn-sm primary" onclick="addSpotToDay()">📍 标记当前位置</button>
+                <button class="btn-sm" onclick="fitDaySpots()">🔄 适配</button>
+                <button class="btn-sm danger" onclick="clearDaySpots()">🗑️ 清除本日</button>
+                <button class="btn-sm pig" onclick="addPigSpot()">🐷 小猪打卡</button>
+                <span style="font-size:11px;color:#7a8a9a;margin-left:auto;">点击地图可添加地点</span>
+            </div>
+        </div>
+        <div class="day-spots-section">
+            <div class="section-header"><h3>📍 本日地点 <span class="pig">🐷</span></h3><span id="dSpotCount" style="font-size:13px;color:#7a8a9a;">0 个</span></div>
+            <div id="dSpotsList"></div>
+        </div>
+        <div class="note-section">
+            <div class="note-title"><span class="pig">🐷</span> 今日旅行笔记</div>
+            <textarea id="dayNote" placeholder="记录今天的心情、趣事、想说的话... 小猪会帮你记住 🐷" onchange="saveDayNote()"></textarea>
+        </div>
+    </div>
+
+    <div class="footer-pig">
+        <span class="pig">🐷</span> 和小猪一起，记录每一次心动 <span class="pig">🐷</span>
+        <br>💾 数据自动保存 · 点击地点可上传照片
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    //  数据 + 状态
+    // ============================================================
+    const STORAGE_KEY = 'trip_spots_v6';
+    const PLAN_KEY = 'trip_plan_v6';
+    const NOTES_KEY = 'trip_notes_v6';
+    const CHECKINS_KEY = 'trip_checkins_v6';
+    const TRAVEL_INFO_KEY = 'trip_travel_info_v6';
+
+    const PLANS = {
+        'dl-yt': {
+            name: '大连→烟台',
+            itinerary: [
+                { day: 'Day 1 · 北京→大连 🐷', meals: ['早餐: 高铁简餐', '午餐: 海味当家·海鲜蒸锅', '晚餐: 黑石礁夜市烧烤'], activity: '🚄 高铁 → 星海广场夜景' },
+                { day: 'Day 2 · 大连海岸 🐷', meals: ['早餐: 酒店/豆腐脑', '午餐: 渔人码头·日丰园', '晚餐: 中原小吃街'], activity: '🏞️ 滨海路 → 渔人码头 → 威尼斯水城' },
+                { day: 'Day 3 · 大连深度 🐷', meals: ['早餐: 酒店', '午餐: 金石滩/旅顺海鲜', '晚餐: 市区日料'], activity: '🌋 金石滩 或 🏯 旅顺' },
+                { day: 'Day 4 · 轮渡之夜 🐷', meals: ['早餐: 酒店', '午餐: 市区简餐', '晚餐: 船上餐厅'], activity: '🚢 中山广场 → 复古电车 → 夜航轮渡' },
+                { day: 'Day 5 · 烟台 🐷', meals: ['早餐: 蓬莱小面', '午餐: 鲁凤炒鸡', '晚餐: 旺角小渔村'], activity: '🌅 海上日出 → 烟台山 → 月亮湾' },
+                { day: 'Day 6 · 返程 🐷', meals: ['早餐: 酒店', '午餐: 烟台简餐', '晚餐: 高铁上'], activity: '🚄 张裕博物馆 → 烟台→北京' }
+            ]
+        },
+        'yt-dl': {
+            name: '烟台→大连',
+            itinerary: [
+                { day: 'Day 1 · 北京→烟台 🐷', meals: ['早餐: 高铁简餐', '午餐: 烟台海鲜', '晚餐: 烟台山周边'], activity: '🚄 高铁 → 烟台山夜景' },
+                { day: 'Day 2 · 烟台海岸 🐷', meals: ['早餐: 蓬莱小面', '午餐: 鲁凤炒鸡', '晚餐: 旺角小渔村'], activity: '🌅 烟台山 → 月亮湾 → 所城里' },
+                { day: 'Day 3 · 烟台深度 🐷', meals: ['早餐: 酒店', '午餐: 烟台特色', '晚餐: 市区海鲜'], activity: '🏖️ 养马岛 或 张裕博物馆' },
+                { day: 'Day 4 · 轮渡之夜 🐷', meals: ['早餐: 酒店', '午餐: 市区简餐', '晚餐: 船上餐厅'], activity: '🚢 烟台港 → 夜航轮渡' },
+                { day: 'Day 5 · 大连 🐷', meals: ['早餐: 抵达后', '午餐: 渔人码头·日丰园', '晚餐: 中原小吃街'], activity: '🌊 星海广场 → 滨海路 → 渔人码头' },
+                { day: 'Day 6 · 返程 🐷', meals: ['早餐: 酒店', '午餐: 大连简餐', '晚餐: 高铁上'], activity: '🚄 中山广场 → 大连→北京' }
+            ]
         }
+    };
 
-        // ============================================================
-        //  地图操作函数
-        // ============================================================
-        function refreshDayMap(mapId, idx) {
-            const plan = PLANS[currentPlan];
-            const day = plan.itinerary[idx];
-            initDailyMap(mapId, day);
+    const PRESET_COORDS = {
+        '星海广场': { lat: 38.88, lng: 121.59 },
+        '渔人码头': { lat: 38.86, lng: 121.69 },
+        '金石滩': { lat: 39.08, lng: 122.01 },
+        '旅顺': { lat: 38.80, lng: 121.26 },
+        '中山广场': { lat: 38.92, lng: 121.64 },
+        '烟台山': { lat: 37.55, lng: 121.40 },
+        '月亮湾': { lat: 37.52, lng: 121.44 },
+        '养马岛': { lat: 37.47, lng: 121.62 },
+        '张裕博物馆': { lat: 37.54, lng: 121.42 },
+        '所城里': { lat: 37.53, lng: 121.42 }
+    };
+
+    const INSPIRE_IMAGES = [
+        { src: 'https://images.unsplash.com/photo-1542370282-1f7a1008d629?w=400&h=300&fit=crop', label: '🌊 大连星海广场' },
+        { src: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop', label: '🌅 大连海岸' },
+        { src: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=300&fit=crop', label: '🏖️ 烟台金沙滩' },
+        { src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop', label: '⛵ 烟台海滨' },
+        { src: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&h=300&fit=crop', label: '🏙️ 大连城市' },
+        { src: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=300&fit=crop', label: '🌊 烟台月亮湾' }
+    ];
+
+    function getCoordsForName(name) {
+        for (let [key, val] of Object.entries(PRESET_COORDS)) {
+            if (name.includes(key)) return val;
         }
+        return null;
+    }
 
-        function addMarkerToDay(mapId, idx) {
-            const map = mapInstances[mapId];
-            if (!map) { alert('✨ 请先等待地图加载完成'); return; }
-            const text = prompt('📍 输入标记名称 (如: 我们合影的地方)');
-            if (!text) return;
-            const center = map.getCenter();
-            if (!center) { alert('无法获取地图中心位置'); return; }
-            try {
-                const marker = new AMap.Marker({
-                    position: [center.getLng(), center.getLat()],
-                    title: text,
-                    label: { content: `❤️ ${text}`, direction: 'top' }
-                });
-                marker.setMap(map);
-                if (!routeMarkers[mapId]) routeMarkers[mapId] = [];
-                routeMarkers[mapId].push(marker);
-                alert(`✅ 已标记 "${text}"`);
-            } catch (e) {
-                alert('标记失败，请重试');
-            }
-        }
+    let currentPlan = 'dl-yt';
+    let spots = [];
+    let checkins = {};
+    let notes = {};
+    let currentDayIndex = 0;
+    let mapInstance = null;
+    let mapMarkers = [];
+    let mapPolyline = null;
+    let travelInfo = { train1: '', ferry: '', train2: '', hotelInfo: '', otherNote: '' };
 
-        function clearMarkers(mapId) {
-            if (!routeMarkers[mapId] || routeMarkers[mapId].length === 0) {
-                alert('✨ 还没有添加标记');
-                return;
-            }
-            if (!confirm('清除所有自定义标记？')) return;
-            routeMarkers[mapId].forEach(m => {
-                try { m.setMap(null); } catch (e) {}
-            });
-            routeMarkers[mapId] = [];
-            alert('✅ 已清除所有标记');
-        }
-
-        function renderTimeline(planKey) {
-            const plan = PLANS[planKey];
-            const container = document.getElementById('timelineContainer');
-            container.innerHTML = plan.timeline.map(item =>
-                `<div class="tl-item"><span class="tl-time">${item.time}</span><span class="tl-desc-editable" contenteditable="true">${item.desc}</span></div>`
-            ).join('');
-        }
-
-        // ============================================================
-        //  花费
-        // ============================================================
-        function renderExpenses() {
-            const container = document.getElementById('expenseList');
-            if (expenseData.length === 0) {
-                container.innerHTML = '<div style="color:#6a6a8a;text-align:center;padding:6px;">✨ 还没有花费记录</div>';
-            } else {
-                container.innerHTML = expenseData.map((item, idx) =>
-                    `<div class="expense-item">
-                        <span class="expense-desc-editable" contenteditable="true">${item.desc}</span>
-                        <span>
-                            <input class="expense-amount-input" type="number" value="${item.amount}" data-idx="${idx}" step="10">
-                            <span class="del" onclick="deleteExpense(${idx})">✕</span>
-                        </span>
-                    </div>`
-                ).join('');
-            }
-            document.querySelectorAll('.expense-amount-input').forEach(el => {
-                el.addEventListener('change', function() {
-                    const idx = parseInt(this.dataset.idx);
-                    expenseData[idx].amount = parseFloat(this.value) || 0;
-                    saveToStorage();
-                    updateTotals();
-                });
-            });
-            document.querySelectorAll('.expense-desc-editable').forEach((el, idx) => {
-                el.addEventListener('blur', function() {
-                    expenseData[idx].desc = this.textContent.trim() || '未命名项目';
-                    saveToStorage();
-                });
-            });
-            updateTotals();
-        }
-
-        function updateTotals() {
-            const total = expenseData.reduce((s, e) => s + e.amount, 0);
-            document.getElementById('expenseTotal').textContent = total;
-            document.getElementById('statSpent').textContent = total;
-            const budget = parseInt(document.getElementById('statBudget').textContent) || 5800;
-            const remain = Math.max(0, budget - total);
-            document.getElementById('statRemain').textContent = remain;
-            document.getElementById('heroRemain').textContent = remain;
-            document.getElementById('badgeSpent').textContent = total;
-            const pct = budget > 0 ? Math.round((remain / budget) * 100) : 0;
-            document.getElementById('badgeRemainPct').textContent = pct;
-            const pctNum = (remain / budget) * 100;
-            const el = document.getElementById('statRemain');
-            el.parentElement.className = 'stat-card ' + (pctNum > 30 ? 'green' : pctNum > 10 ? 'orange' : 'blue');
-        }
-
-        function addExpense() {
-            const desc = document.getElementById('expenseDesc').value.trim() || '✨ 新项目';
-            const amount = parseFloat(document.getElementById('expenseAmount').value);
-            if (isNaN(amount) || amount <= 0) { alert('✨ 请输入有效金额'); return; }
-            expenseData.push({ desc, amount });
-            document.getElementById('expenseDesc').value = '';
-            document.getElementById('expenseAmount').value = '';
-            renderExpenses();
-            saveToStorage();
-        }
-
-        function deleteExpense(idx) {
-            expenseData.splice(idx, 1);
-            renderExpenses();
-            saveToStorage();
-        }
-
-        // ============================================================
-        //  交通 / 天气 / 其他
-        // ============================================================
-        function updateTransportTotal() {
-            const p1 = parseFloat(document.getElementById('pBJDl').value) || 0;
-            const p2 = parseFloat(document.getElementById('pDlYt').value) || 0;
-            const p3 = parseFloat(document.getElementById('pYtBj').value) || 0;
-            const total = (p1 + p3) * 2 + p2 * 2;
-            document.getElementById('transportTotal').textContent = total;
-            document.getElementById('statTransport').textContent = total;
-        }
-
-        function refreshWeather() {
-            const w = { dl: { temp: 18, desc: '晴' }, yt: { temp: 20, desc: '多云' } };
-            document.getElementById('dlTemp').textContent = w.dl.temp + '°C';
-            document.getElementById('dlDesc').textContent = w.dl.desc;
-            document.getElementById('ytTemp').textContent = w.yt.temp + '°C';
-            document.getElementById('ytDesc').textContent = w.yt.desc;
-            document.getElementById('seaTemp').textContent = (w.dl.temp - 2) + '°C';
-            document.getElementById('seaDesc').textContent = '海况平稳';
-            document.getElementById('statWeather').textContent = w.dl.temp + '°C';
-            document.getElementById('weatherStatus').textContent = '已更新';
-            document.getElementById('heroWeather').textContent = `🌤️ 大连 ${w.dl.temp}°C ${w.dl.desc} · 烟台 ${w.yt.temp}°C ${w.yt.desc}`;
-        }
-
-        function updateHero() {
-            const start = new Date(2026, 9, 1);
-            const now = new Date();
-            const diff = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
-            document.getElementById('heroDays').textContent = Math.max(0, diff);
-            document.getElementById('badgeDays').textContent = 6;
-        }
-
-        function exportData() {
-            const data = {
-                plan: currentPlan,
-                expenses: expenseData,
-                transport: { bjDl: document.getElementById('pBJDl').value, dlYt: document.getElementById('pDlYt').value, ytBj: document.getElementById('pYtBj').value },
-                exportTime: new Date().toISOString()
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `trip_data_${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-        }
-
-        function resetAll() {
-            if (!confirm('✨ 重置所有数据？')) return;
-            expenseData = [
-                { desc: '高铁票 (北京→大连)', amount: 600 },
-                { desc: '大连住宿 (3晚)', amount: 1200 },
-                { desc: '轮渡船票', amount: 400 },
-                { desc: '烟台住宿 (1晚)', amount: 400 },
-                { desc: '高铁票 (烟台→北京)', amount: 600 }
+    // ============================================================
+    //  存储
+    // ============================================================
+    function loadSpots() {
+        try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) spots = JSON.parse(raw); } catch (e) { spots = []; }
+        if (spots.length === 0) {
+            spots = [
+                { id: 's1', dayIndex: 0, name: '星海广场', lat: 38.88, lng: 121.59, photos: [] },
+                { id: 's2', dayIndex: 1, name: '渔人码头', lat: 38.86, lng: 121.69, photos: [] },
+                { id: 's4', dayIndex: 4, name: '烟台山', lat: 37.55, lng: 121.40, photos: [] },
+                { id: 's5', dayIndex: 4, name: '月亮湾', lat: 37.52, lng: 121.44, photos: [] }
             ];
-            document.getElementById('pBJDl').value = 481;
-            document.getElementById('pDlYt').value = 280;
-            document.getElementById('pYtBj').value = 465;
-            renderExpenses();
-            updateTransportTotal();
-            refreshWeather();
-            updateHero();
-            if (currentPlan !== 'dl-yt') switchPlan('dl-yt');
-            else { renderItinerary('dl-yt');
-                renderTimeline('dl-yt');
-                renderToday('dl-yt'); }
-            saveToStorage();
+            saveSpots();
         }
+    }
+    function saveSpots() { localStorage.setItem(STORAGE_KEY, JSON.stringify(spots)); updateAllStats(); }
+    function loadCheckins() {
+        try { const raw = localStorage.getItem(CHECKINS_KEY); if (raw) checkins = JSON.parse(raw); } catch (e) { checkins = {}; }
+    }
+    function saveCheckins() { localStorage.setItem(CHECKINS_KEY, JSON.stringify(checkins)); updateAllStats(); }
+    function loadNotes() {
+        try { const raw = localStorage.getItem(NOTES_KEY); if (raw) notes = JSON.parse(raw); } catch (e) { notes = {}; }
+    }
+    function saveNotes() { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); }
+    function loadPlan() {
+        try { const p = localStorage.getItem(PLAN_KEY); if (p && PLANS[p]) currentPlan = p; } catch (e) {}
+    }
+    function savePlan() { localStorage.setItem(PLAN_KEY, currentPlan); }
+    function loadTravelInfo() {
+        try { const raw = localStorage.getItem(TRAVEL_INFO_KEY); if (raw) travelInfo = JSON.parse(raw); } catch (e) {}
+        document.getElementById('train1').value = travelInfo.train1 || '';
+        document.getElementById('ferry').value = travelInfo.ferry || '';
+        document.getElementById('train2').value = travelInfo.train2 || '';
+        document.getElementById('hotelInfo').value = travelInfo.hotelInfo || '';
+        document.getElementById('otherNote').value = travelInfo.otherNote || '';
+        updateBudgetFromInfo();
+    }
+    function saveTravelInfo() {
+        travelInfo = {
+            train1: document.getElementById('train1').value,
+            ferry: document.getElementById('ferry').value,
+            train2: document.getElementById('train2').value,
+            hotelInfo: document.getElementById('hotelInfo').value,
+            otherNote: document.getElementById('otherNote').value
+        };
+        localStorage.setItem(TRAVEL_INFO_KEY, JSON.stringify(travelInfo));
+        updateBudgetFromInfo();
+        alert('🐷 已保存！');
+    }
 
-        function saveToStorage() { localStorage.setItem('trip_board_expenses_v5', JSON.stringify(expenseData)); }
-
-        function savePlanToStorage(k) { localStorage.setItem('trip_board_plan_v5', k); }
-
-        function loadPlanFromStorage() {
-            try { const p = localStorage.getItem('trip_board_plan_v5'); if (p && PLANS[p]) return p; } catch (e) {}
-            return 'dl-yt';
+    function updateBudgetFromInfo() {
+        const text = travelInfo.train1 + travelInfo.ferry + travelInfo.train2 + travelInfo.hotelInfo;
+        const numbers = text.match(/\d+/g);
+        let total = 0;
+        if (numbers) { numbers.forEach(n => { total += parseInt(n) || 0; }); }
+        if (total === 0 && text.length > 0) {
+            document.getElementById('hBudget').textContent = '请填数字';
+            document.getElementById('rTotalBudget').textContent = '--';
+            document.getElementById('rSpent').textContent = '--';
+            document.getElementById('rRemain').textContent = '--';
+            document.getElementById('budgetRing').style.setProperty('--pct', '0%');
+            document.getElementById('budgetRingLabel').textContent = '0%';
+            return;
         }
+        const spent = Math.min(total, Math.round(total * 0.4));
+        const remain = total - spent;
+        document.getElementById('hBudget').textContent = total || '--';
+        document.getElementById('rTotalBudget').textContent = total || '--';
+        document.getElementById('rSpent').textContent = spent || '--';
+        document.getElementById('rRemain').textContent = remain || '--';
+        const pct = total > 0 ? Math.min(100, (spent / total) * 100) : 0;
+        document.getElementById('budgetRing').style.setProperty('--pct', pct + '%');
+        document.getElementById('budgetRingLabel').textContent = Math.round(pct) + '%';
+    }
 
-        function loadFromStorage() {
-            try { const r = localStorage.getItem('trip_board_expenses_v5'); if (r) { const d = JSON.parse(r); if (Array.isArray(d) && d.length > 0) expenseData = d; } } catch (e) {}
+    // ============================================================
+    //  统计
+    // ============================================================
+    function updateAllStats() {
+        const totalPhotos = spots.reduce((sum, s) => sum + (s.photos ? s.photos.length : 0), 0);
+        const checked = spots.filter(s => checkins[s.id]).length;
+        const total = spots.length;
+        document.getElementById('hSpots').textContent = total;
+        document.getElementById('hPhotos').textContent = totalPhotos;
+        document.getElementById('hCheckins').textContent = checked;
+        document.getElementById('hCheckinsTotal').textContent = total;
+        document.getElementById('hSpotsSub').textContent = `🐷 已打卡 ${checked} 个`;
+        const dayProgress = Math.min(100, (currentDayIndex + 1) / 6 * 100);
+        document.getElementById('hProgress').textContent = Math.round(dayProgress) + '%';
+        document.getElementById('hProgressSub').textContent = `🐷 Day ${Math.min(currentDayIndex+1,6)} / 6`;
+        const checkPct = total > 0 ? Math.round((checked / total) * 100) : 0;
+        document.getElementById('checkinDone').textContent = checked;
+        document.getElementById('checkinTotal').textContent = total;
+        document.getElementById('checkinPct').textContent = checkPct + '%';
+        document.getElementById('checkinBar').style.width = checkPct + '%';
+        renderBarChart();
+        renderPieChart();
+        renderPhotoWall();
+        renderDayCards();
+        updateBudgetFromInfo();
+        if (document.getElementById('page-day').classList.contains('active')) {
+            renderDayDetail(currentDayIndex);
         }
+    }
 
-        // ============================================================
-        //  初始化
-        // ============================================================
-        loadFromStorage();
-        const saved = loadPlanFromStorage();
-        currentPlan = saved;
-        document.querySelectorAll('.btn-plan').forEach(b => b.classList.toggle('active', b.dataset.plan === saved));
-        document.getElementById('planTag').textContent = PLANS[saved].name;
-        document.getElementById('tipText').innerHTML = PLANS[saved].tip;
-        renderItinerary(saved);
-        renderTimeline(saved);
-        renderToday(saved);
-        renderExpenses();
-        updateTransportTotal();
-        refreshWeather();
-        updateHero();
+    function updateCountdown() {
+        const start = new Date(2026, 9, 1);
+        const now = new Date();
+        const diff = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+        document.getElementById('countdownDays').textContent = Math.max(0, diff);
+        document.getElementById('planDisplay').textContent = PLANS[currentPlan].name;
+    }
 
-        // 窗口resize刷新地图
-        window.addEventListener('resize', () => {
-            Object.keys(mapInstances).forEach(k => { try { mapInstances[k].setFitView(); } catch (e) {} });
+    // ============================================================
+    //  图表
+    // ============================================================
+    function renderBarChart() {
+        const container = document.getElementById('barChart');
+        const daySpots = Array.from({ length: 6 }, (_, i) => spots.filter(s => s.dayIndex === i).length);
+        const max = Math.max(1, ...daySpots);
+        container.innerHTML = daySpots.map((count, i) => `
+            <div class="bar-item">
+                <div class="bar" style="height: ${(count / max) * 80 + 4}px;"></div>
+                <div class="bar-label">D${i+1}</div>
+                <div style="font-size:9px;color:#4a7ad8;font-weight:600;">${count}</div>
+            </div>
+        `).join('');
+        document.getElementById('barTotal').textContent = spots.length;
+    }
+
+    function renderPieChart() {
+        const dl = spots.filter(s => {
+            const plan = PLANS[currentPlan];
+            const isDl = plan.itinerary.slice(0, 3).some((_, i) => s.dayIndex === i);
+            return isDl;
+        }).length;
+        const yt = spots.length - dl;
+        const total = spots.length || 1;
+        const dlPct = (dl / total) * 100;
+        const ytPct = (yt / total) * 100;
+        document.getElementById('pieChart').style.background =
+            `conic-gradient(#4a7ad8 0% ${dlPct}%, #6c5ecf ${dlPct}% ${dlPct + ytPct}%)`;
+        document.getElementById('pieDl').textContent = dl;
+        document.getElementById('pieYt').textContent = yt;
+        document.getElementById('pieTotal').textContent = spots.length;
+    }
+
+    function renderPhotoWall() {
+        const container = document.getElementById('photoWall');
+        const allPhotos = [];
+        spots.forEach(s => { if (s.photos) { s.photos.forEach(p => { allPhotos.push({ spotName: s.name, data: p.data, id: p.id }); }); } });
+        document.getElementById('wallCount').textContent = allPhotos.length + ' 张照片';
+        if (allPhotos.length === 0) {
+            container.innerHTML = `<div class="empty-state"><span class="pig-big">🐷</span>还没有照片呢～<br>添加地点后上传照片吧！</div>`;
+            return;
+        }
+        container.innerHTML = allPhotos.slice(0, 30).map(p =>
+            `<div class="wall-item" onclick="window.open('${p.data}','_blank')"><img src="${p.data}" alt="${p.spotName}" /><div class="badge">${p.spotName}</div></div>`
+        ).join('');
+        if (allPhotos.length > 30) {
+            container.innerHTML += `<div style="grid-column:1/-1;text-align:center;color:#7a8a9a;font-size:12px;padding:4px;">🐷 + 还有 ${allPhotos.length - 30} 张</div>`;
+        }
+    }
+
+    function renderHome() {
+        const plan = PLANS[currentPlan];
+        document.getElementById('planDisplay').textContent = plan.name;
+        renderDayCards();
+        renderInspireGallery();
+        updateAllStats();
+        updateCountdown();
+        loadTravelInfo();
+    }
+
+    function renderInspireGallery() {
+        const container = document.getElementById('inspireGallery');
+        container.innerHTML = INSPIRE_IMAGES.map(img =>
+            `<div class="img-card" onclick="window.open('${img.src.replace('?w=400&h=300&fit=crop','')}','_blank')">
+                <img src="${img.src}" alt="${img.label}" loading="lazy" />
+                <div class="img-label">${img.label}</div>
+            </div>`
+        ).join('');
+    }
+
+    function renderDayCards() {
+        const plan = PLANS[currentPlan];
+        const container = document.getElementById('dayCards');
+        container.innerHTML = plan.itinerary.map((d, i) => {
+            const count = spots.filter(s => s.dayIndex === i).length;
+            const photos = spots.filter(s => s.dayIndex === i).reduce((sum, s) => sum + (s.photos ? s.photos.length : 0), 0);
+            const checked = spots.filter(s => s.dayIndex === i && checkins[s.id]).length;
+            const allChecked = count > 0 && checked === count;
+            return `<div class="day-card" onclick="openDay(${i})">
+                ${allChecked ? '<span class="check-mark">✅</span>' : '<span class="pig-icon">🐷</span>'}
+                <div class="day-num">Day ${i+1}</div>
+                <div class="day-label">${d.day.replace('Day '+(i+1)+' · ','').replace('🐷','')}</div>
+                <div class="day-sub">📍 ${count} 个 · 📷 ${photos} 张</div>
+                <div class="day-badge">${allChecked ? '✅ 已完成 🐷' : '查看详情 →'}</div>
+            </div>`;
+        }).join('');
+    }
+
+    // ============================================================
+    //  每日详情
+    // ============================================================
+    function openDay(index) {
+        currentDayIndex = index;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-day').classList.add('active');
+        renderDayDetail(index);
+        document.getElementById('dayNote').value = notes[index] || '';
+        setTimeout(() => initDayMap(index), 400);
+    }
+
+    function goHome() {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-home').classList.add('active');
+        if (mapInstance) { try { mapInstance.destroy(); } catch (e) {} mapInstance = null; mapMarkers = []; mapPolyline = null; }
+        renderHome();
+    }
+
+    function renderDayDetail(index) {
+        const plan = PLANS[currentPlan];
+        const day = plan.itinerary[index];
+        document.getElementById('dTitle').innerHTML = `<span class="pig">🐷</span> ${day.day}`;
+        const infoContainer = document.getElementById('dInfo');
+        infoContainer.innerHTML = `
+            <div style="display:flex;flex-wrap:wrap;gap:4px 20px;font-size:14px;">
+                ${day.meals.map(m => `<div><span style="font-weight:600;color:#4a7ad8;">${m.split(':')[0]}:</span> ${m.split(':')[1]}</div>`).join('')}
+            </div>
+            <div class="activity">🏃 ${day.activity}</div>
+        `;
+        renderDaySpots(index);
+    }
+
+    function renderDaySpots(index) {
+        const daySpots = spots.filter(s => s.dayIndex === index);
+        const container = document.getElementById('dSpotsList');
+        document.getElementById('dSpotCount').textContent = daySpots.length + ' 个';
+        if (daySpots.length === 0) {
+            container.innerHTML = `<div class="empty-state"><span class="pig-big">🐷</span>还没有地点呢～<br>点击地图添加，小猪等你来打卡！</div>`;
+            return;
+        }
+        container.innerHTML = daySpots.map(spot => {
+            const photoCount = spot.photos ? spot.photos.length : 0;
+            const isChecked = checkins[spot.id] || false;
+            const thumbs = spot.photos && spot.photos.length > 0 ? `
+                <div class="photo-thumbs">
+                    ${spot.photos.slice(0,4).map(p => `
+                        <div class="thumb">
+                            <img src="${p.data}" alt="照片" />
+                            <button class="remove" onclick="removeDayPhoto('${spot.id}','${p.id}')">✕</button>
+                        </div>
+                    `).join('')}
+                    ${spot.photos.length > 4 ? `<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:12px;color:#4a7ad8;">+${spot.photos.length-4}</div>` : ''}
+                </div>
+            ` : '';
+            return `<div class="day-spot-item">
+                <div class="spot-icon">${isChecked ? '✅' : '🐷'}</div>
+                <div class="spot-info">
+                    <div class="spot-name">${spot.name} ${isChecked ? '' : '<span class="pig-tag">🐷</span>'}</div>
+                    <div class="spot-photos">📷 ${photoCount} 张照片</div>
+                    ${thumbs}
+                </div>
+                <div class="spot-actions">
+                    <button class="btn-sm primary" onclick="uploadDayPhoto('${spot.id}')">📤</button>
+                    <button class="btn-sm" onclick="focusDaySpot('${spot.id}')">🔍</button>
+                    <button class="btn-sm ${isChecked ? 'success' : ''}" onclick="toggleCheckin('${spot.id}')" style="${isChecked ? 'background:#4a9e7a;color:white;' : ''}">${isChecked ? '✅' : '🐷'}</button>
+                    <button class="btn-sm danger" onclick="deleteDaySpot('${spot.id}')">🗑️</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ============================================================
+    //  小猪 + 打卡
+    // ============================================================
+    function playPigSound() {
+        const btn = document.querySelector('.btn-sm.pig');
+        if (btn) { btn.textContent = '🐷 哼哼～'; setTimeout(() => { btn.textContent = '🐷 小猪加油'; }, 800); }
+        for (let i = 0; i < 6; i++) {
+            setTimeout(() => {
+                const pig = document.createElement('div');
+                pig.textContent = '🐷';
+                pig.style.cssText = `position:fixed;font-size:${20+Math.random()*20}px;left:${10+Math.random()*80}%;top:-30px;z-index:9999;pointer-events:none;animation:pigFall ${2+Math.random()*2}s ease-in forwards;`;
+                document.body.appendChild(pig);
+                setTimeout(() => pig.remove(), 4000);
+            }, i * 200);
+        }
+        if (!document.getElementById('pigFallStyle')) {
+            const style = document.createElement('style');
+            style.id = 'pigFallStyle';
+            style.textContent = `@keyframes pigFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }`;
+            document.head.appendChild(style);
+        }
+    }
+
+    function addPigSpot() {
+        if (!mapInstance) return;
+        const center = mapInstance.getCenter();
+        const pigNames = ['🐷 小猪观景台', '🐷 小猪休息站', '🐷 小猪拍照点', '🐷 小猪美食站', '🐷 小猪打卡点'];
+        const name = pigNames[Math.floor(Math.random() * pigNames.length)];
+        addSpotToDayInternal(name, center.getLat(), center.getLng());
+    }
+
+    function toggleCheckin(spotId) {
+        if (checkins[spotId]) { delete checkins[spotId]; } else { checkins[spotId] = true; playPigSound(); }
+        saveCheckins();
+        if (document.getElementById('page-day').classList.contains('active')) { renderDaySpots(currentDayIndex); }
+        updateAllStats();
+    }
+
+    function checkinAll() { spots.forEach(s => { checkins[s.id] = true; }); saveCheckins(); updateAllStats(); if (document.getElementById('page-day').classList.contains('active')) { renderDaySpots(currentDayIndex); } playPigSound(); }
+
+    function resetCheckins() { checkins = {}; saveCheckins(); updateAllStats(); if (document.getElementById('page-day').classList.contains('active')) { renderDaySpots(currentDayIndex); } }
+
+    function saveDayNote() {
+        const text = document.getElementById('dayNote').value;
+        if (text.trim()) { notes[currentDayIndex] = text.trim(); } else { delete notes[currentDayIndex]; }
+        saveNotes();
+    }
+
+    // ============================================================
+    //  地图
+    // ============================================================
+    function initDayMap(index) {
+        if (typeof AMap === 'undefined') { setTimeout(() => initDayMap(index), 500); return; }
+        const container = document.getElementById('dMap');
+        if (mapInstance) { try { mapInstance.destroy(); } catch (e) {} mapInstance = null; mapMarkers = []; mapPolyline = null; }
+        const daySpots = spots.filter(s => s.dayIndex === index);
+        const center = daySpots.length > 0 ? [daySpots[0].lng, daySpots[0].lat] : [121.0, 38.5];
+        const zoom = daySpots.length > 0 ? 11 : 8;
+        mapInstance = new AMap.Map(container, { zoom, center, mapStyle: 'amap://styles/fresh', viewMode: '2D', resizeEnable: true });
+        mapInstance.on('click', function(e) {
+            const lng = e.lnglat.getLng();
+            const lat = e.lnglat.getLat();
+            const name = prompt('📍 输入地点名称 (可加 🐷)');
+            if (name && name.trim()) { addSpotToDayInternal(name.trim(), lat, lng); }
         });
+        renderDayMarkers(index);
+        if (daySpots.length > 0) { setTimeout(() => { try { mapInstance.setFitView(mapMarkers); } catch (e) {} }, 300); }
+    }
 
-        console.log('✨ 浪漫旅行看板已加载！每条路线都有轨迹地图，可自由标点 💙');
-    </script>
+    function renderDayMarkers(index) {
+        const daySpots = spots.filter(s => s.dayIndex === index);
+        mapMarkers.forEach(m => { try { m.setMap(null); } catch (e) {} }); mapMarkers = [];
+        if (mapPolyline) { try { mapPolyline.setMap(null); } catch (e) {}; mapPolyline = null; }
+        if (daySpots.length === 0) return;
+        const sorted = [...daySpots].sort((a, b) => a.id.localeCompare(b.id));
+        sorted.forEach((spot, idx) => {
+            const isChecked = checkins[spot.id] || false;
+            const labelText = isChecked ? `✅ ${spot.name}` : `${idx+1}. ${spot.name} 🐷`;
+            const marker = new AMap.Marker({
+                position: [spot.lng, spot.lat],
+                title: spot.name,
+                label: { content: `<div style="background:${isChecked ? '#4a9e7a' : '#4a7ad8'};color:white;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.12);">${labelText}</div>`, direction: 'top' }
+            });
+            marker.setMap(mapInstance);
+            mapMarkers.push(marker);
+            marker.on('click', function() {
+                const info = new AMap.InfoWindow({
+                    content: `<div style="padding:6px 10px;max-width:200px;">
+                        <strong>${isChecked ? '✅' : '🐷'} ${spot.name}</strong>
+                        <div style="font-size:12px;color:#7a8a9a;">📷 ${spot.photos ? spot.photos.length : 0} 张</div>
+                        <button onclick="uploadDayPhoto('${spot.id}')" style="margin-top:4px;padding:3px 12px;border:none;border-radius:20px;background:#4a7ad8;color:white;cursor:pointer;font-size:11px;">📤 上传</button>
+                        <button onclick="toggleCheckin('${spot.id}')" style="margin-top:4px;padding:3px 12px;border:none;border-radius:20px;background:${checkins[spot.id]?'#4a9e7a':'#e8edf5'};color:${checkins[spot.id]?'white':'#1a2a3e'};cursor:pointer;font-size:11px;margin-left:4px;">${checkins[spot.id]?'✅ 已打卡':'🐷 打卡'}</button>
+                        <button onclick="deleteDaySpot('${spot.id}')" style="margin-top:4px;padding:3px 12px;border:none;border-radius:20px;background:#e0d0d0;color:#b35a5a;cursor:pointer;font-size:11px;margin-left:4px;">🗑️</button>
+                    </div>`
+                });
+                info.open(mapInstance, [spot.lng, spot.lat]);
+            });
+        });
+        if (sorted.length > 1) {
+            const path = sorted.map(s => [s.lng, s.lat]);
+            mapPolyline = new AMap.Polyline({ path, strokeColor: '#4a7ad8', strokeWeight: 4, strokeStyle: 'solid', lineJoin: 'round', lineCap: 'round', strokeOpacity: 0.7 });
+            mapPolyline.setMap(mapInstance);
+            const start = sorted[0], end = sorted[sorted.length - 1];
+            const sm = new AMap.Marker({ position: [start.lng, start.lat], title: '起点', label: { content: '🚩 起点 🐷', direction: 'top' } });
+            sm.setMap(mapInstance); mapMarkers.push(sm);
+            const em = new AMap.Marker({ position: [end.lng, end.lat], title: '终点', label: { content: '🏁 终点 🐷', direction: 'top' } });
+            em.setMap(mapInstance); mapMarkers.push(em);
+        }
+    }
+
+    // ============================================================
+    //  地点操作
+    // ============================================================
+    function addSpotToDay() {
+        if (!mapInstance) return;
+        const center = mapInstance.getCenter();
+        const name = prompt('📍 输入地点名称 (可加 🐷)');
+        if (name && name.trim()) { addSpotToDayInternal(name.trim(), center.getLat(), center.getLng()); }
+    }
+
+    function addSpotToDayInternal(name, lat, lng) {
+        const id = 's_' + Date.now();
+        spots.push({ id, dayIndex: currentDayIndex, name, lat, lng, photos: [] });
+        saveSpots();
+        renderDaySpots(currentDayIndex);
+        renderDayMarkers(currentDayIndex);
+        setTimeout(() => { try { mapInstance.setFitView(mapMarkers); } catch (e) {} }, 300);
+        updateAllStats();
+    }
+
+    function deleteDaySpot(id) {
+        if (!confirm('删除这个地点？🐷')) return;
+        spots = spots.filter(s => s.id !== id);
+        delete checkins[id];
+        saveSpots();
+        saveCheckins();
+        renderDaySpots(currentDayIndex);
+        renderDayMarkers(currentDayIndex);
+        updateAllStats();
+    }
+
+    function focusDaySpot(id) {
+        const spot = spots.find(s => s.id === id);
+        if (!spot || !mapInstance) return;
+        mapInstance.setCenter([spot.lng, spot.lat]);
+        mapInstance.setZoom(14);
+    }
+
+    function fitDaySpots() {
+        if (!mapInstance || mapMarkers.length === 0) return;
+        try { mapInstance.setFitView(mapMarkers); } catch (e) {}
+    }
+
+    function clearDaySpots() {
+        const daySpots = spots.filter(s => s.dayIndex === currentDayIndex);
+        if (daySpots.length === 0) return;
+        if (!confirm(`清除 Day ${currentDayIndex+1} 所有地点？🐷`)) return;
+        daySpots.forEach(s => { delete checkins[s.id]; });
+        spots = spots.filter(s => s.dayIndex !== currentDayIndex);
+        saveSpots();
+        saveCheckins();
+        renderDaySpots(currentDayIndex);
+        renderDayMarkers(currentDayIndex);
+        updateAllStats();
+    }
+
+    function uploadDayPhoto(spotId) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.multiple = true;
+        input.onchange = function(e) {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+            const spot = spots.find(s => s.id === spotId);
+            if (!spot) return;
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const dataUrl = ev.target.result;
+                    if (!spot.photos) spot.photos = [];
+                    spot.photos.push({ id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), data: dataUrl });
+                    saveSpots();
+                    renderDaySpots(currentDayIndex);
+                    updateAllStats();
+                };
+                reader.readAsDataURL(file);
+            });
+        };
+        input.click();
+    }
+
+    function removeDayPhoto(spotId, photoId) {
+        const spot = spots.find(s => s.id === spotId);
+        if (!spot) return;
+        spot.photos = spot.photos.filter(p => p.id !== photoId);
+        saveSpots();
+        renderDaySpots(currentDayIndex);
+        updateAllStats();
+    }
+
+    function switchPlan(planKey) {
+        currentPlan = planKey;
+        document.querySelectorAll('.btn-plan').forEach(b => b.classList.toggle('active', b.dataset.plan === planKey));
+        savePlan();
+        renderHome();
+        document.getElementById('planDisplay').textContent = PLANS[currentPlan].name;
+        if (document.getElementById('page-day').classList.contains('active')) {
+            renderDayDetail(currentDayIndex);
+            setTimeout(() => initDayMap(currentDayIndex), 400);
+        }
+    }
+
+    function refreshWeather() {
+        if (typeof AMap === 'undefined' || !AMap.Weather) {
+            alert('天气插件加载中，请稍后重试 🐷');
+            return;
+        }
+        const weather = new AMap.Weather();
+        weather.getLive('大连', function(err, data) { if (err) { console.warn(err); return; } });
+    }
+
+    function exportData() {
+        const data = { plan: currentPlan, spots, checkins, notes, travelInfo, exportTime: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `travel_spots_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    // ============================================================
+    //  ⭐ AI 问答（Netlify Functions）
+    // ============================================================
+    async function askAI() {
+        const input = document.getElementById('aiInput');
+        const responseDiv = document.getElementById('aiResponse');
+        const btn = document.getElementById('aiBtn');
+        const question = input.value.trim();
+
+        if (!question) {
+            responseDiv.style.display = 'block';
+            responseDiv.innerHTML = '🐷 小猪说：先输入问题再问我呀～';
+            return;
+        }
+
+        responseDiv.style.display = 'block';
+        responseDiv.innerHTML = '<div class="typing">🐷 小猪正在思考</div>';
+        btn.disabled = true;
+        btn.textContent = '⏳ 思考中...';
+
+        try {
+            const res = await fetch('/.netlify/functions/gemini', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: question })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                const reply = data.reply.replace(/\n/g, '<br>');
+                responseDiv.innerHTML = `🐷 <strong>小猪说：</strong><br>${reply}`;
+            } else {
+                responseDiv.innerHTML = `🐷 小猪遇到了问题：${data.error || '请稍后重试'}`;
+            }
+        } catch (err) {
+            responseDiv.innerHTML = `🐷 网络连接失败，请检查网络后重试。<br><span style="font-size:12px;color:#8a9aaa;">错误信息：${err.message}</span>`;
+        }
+
+        btn.disabled = false;
+        btn.textContent = '🐷 问小猪';
+    }
+
+    function clearAI() {
+        document.getElementById('aiInput').value = '';
+        const responseDiv = document.getElementById('aiResponse');
+        responseDiv.style.display = 'none';
+        responseDiv.innerHTML = '';
+    }
+
+    // ============================================================
+    //  初始化
+    // ============================================================
+    loadPlan();
+    loadSpots();
+    loadCheckins();
+    loadNotes();
+    loadTravelInfo();
+    renderHome();
+    updateCountdown();
+
+    // 暴露全局函数
+    window.switchPlan = switchPlan;
+    window.refreshWeather = refreshWeather;
+    window.exportData = exportData;
+    window.openDay = openDay;
+    window.goHome = goHome;
+    window.addSpotToDay = addSpotToDay;
+    window.fitDaySpots = fitDaySpots;
+    window.clearDaySpots = clearDaySpots;
+    window.deleteDaySpot = deleteDaySpot;
+    window.focusDaySpot = focusDaySpot;
+    window.uploadDayPhoto = uploadDayPhoto;
+    window.removeDayPhoto = removeDayPhoto;
+    window.toggleCheckin = toggleCheckin;
+    window.checkinAll = checkinAll;
+    window.resetCheckins = resetCheckins;
+    window.saveDayNote = saveDayNote;
+    window.playPigSound = playPigSound;
+    window.addPigSpot = addPigSpot;
+    window.saveTravelInfo = saveTravelInfo;
+    window.loadTravelInfo = loadTravelInfo;
+    window.askAI = askAI;
+    window.clearAI = clearAI;
+
+    console.log('🐷 旅行足迹看板已加载！AI助手已就绪 (Netlify Functions)');
+    console.log(`📍 共 ${spots.length} 个地点，📷 ${spots.reduce((s,sp) => s + (sp.photos?sp.photos.length:0),0)} 张照片`);
+</script>
 </body>
 </html>
